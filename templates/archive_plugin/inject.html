@@ -1,0 +1,16 @@
+<div id="archive_list">
+    <form action="{% url 'archive_view' %}" method="POST"> <!-- should probably check to see whether article is selected, pass article or journal id -->
+        {% csrf_token %}
+        <select>
+            {% if article %}
+                {% for version in article.versions %}
+                <option value="{{ version }}">version.date</option>
+                {% endfor %}
+            {% else %}
+                {% for version in journal.versions %}
+                <option value="{{ version }}">version.date</option>
+                {% endfor %}
+            {% endif %}
+        </select>
+    </form>
+</div>
