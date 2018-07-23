@@ -12,9 +12,16 @@ from utils import models
 def index(request):
     plugin = models.Plugin.objects.get(name=plugin_settings.SHORT_NAME)
     
-    archive_enabled = setting_handler.get_plugin_setting(plugin, 'archive_enabled', request.journal, create=True,
-                                                        pretty='Enable Archiving', types='boolean').processed_value
-    admin_form = forms.ArchiveAdminForm(initial={'archive_enabled': archive_enabled})
+    journal_archive_enabled = setting_handler.get_plugin_setting(plugin, 'journal_archive_enabled', request.journal, create=True,
+                                                        pretty='Enable Journal Archive Display', types='boolean').processed_value
+    article_archive_enabled = setting_handler.get_plugin_setting(plugin, 'article_archive_enabled', request.journal, create=True,
+                                                        pretty='Enable Article Archive Display', types='boolean').processed_value
+    edit_article_enabled = setting_handler.get_plugin_setting(plugin, 'edit_archive_enabled', request.journal, create=True,
+                                                        pretty='Enable Article Editing and Updating', types='boolean').processed_value
+    
+    admin_form = forms.ArchiveAdminForm(initial={'journal_archive_enabled': journal_archive_enabled, 
+                                                'article_archive_enabled': article_archive_enabled,
+                                                'edit_article_enabled': edit_article_enabled})
 
     if request.POST:
         admin_form = forms.ArchiveAdminForm(request.POST)
@@ -38,3 +45,27 @@ def view_archive(request):
     pass
     # TODO: write logic for querying database, viewing the relevant archived version of journal or article
     # may need to write two versions of function based on whether viewing archived version of article or journal
+
+def journal_archive(request):
+    """
+    Display list of overall journal archives
+    """
+    pass
+
+def archive_list(request, archive_id):
+    """
+    List all articles in selected archive
+    """
+    pass
+
+def article_archive(request, article_id):
+    """
+    Display a list of previous version of an article
+    """
+    pass
+
+def update_article(request, article_id):
+    """
+    Starts the process for authors to submit updates to an existing article
+    """
+    pass
