@@ -1,0 +1,22 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% load i18n %}
+
+
+{% block title %}{{ main_article.title | striptags }}: Revision History{% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block body %}
+    <section id="content">
+        <div class="row">
+            <h3>{{ main_article.title }}: Revision History</h3>
+            <ul>
+                {% for version in versions %}
+                    <li><a href="{% url 'article_view' version.identifier.id_type version.identifier.identifier">{{ version.date_published }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
+{% endblock %}

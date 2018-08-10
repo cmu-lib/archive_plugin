@@ -1,0 +1,12 @@
+<div>
+    <form method="POST" action="">
+        {% csrf_token %}
+        <fieldset>
+            <legend>Are you submitting a new article or a revision to an existing article?</legend>
+            <input type="radio" name="update_type" value="new" checked> New<br>
+            <input type="radio" name="update_type" value="revision_min"> Minor Revision (typo fix)<br>
+            <input type="radio" name="update_type" value="revision_maj"> Major Revision (content change)<br>
+            <input type="submit" value="Submit">
+        </fieldset>
+    </form>
+</div>
