@@ -59,17 +59,21 @@ def journal_archive(request):
 
     return render(request, template, context)
 
-def archive_list(request, archive_id):
-    """
-    List all articles in selected archive
-    """
-    pass
-
 def article_archive(request, article_id):
     """
-    Display a list of previous version of an article
+    :article_id = an int representing the pk of the article requested
+    Displays a list of previous version of an article
     """
-    pass
+    article = Article.objects.get(pk=article_id)
+    base_article = Article.objects.get(pk=article.version.orig_article)
+
+    # need to deal with possibility update for article has been submitted but not published
+    versions = Article.objects.filter(version__orig_article=base_article.pk).order_by('-date_published')
+
+    template = "archive_plugin/article_version_list.html"
+    context = {'main_article': base_article, 'versions': versions}
+
+    return render(request, template, context)
 
 def update_article(request, article_id):
     """
