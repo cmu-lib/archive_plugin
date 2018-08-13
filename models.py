@@ -10,7 +10,6 @@ UPDATE_TYPES = (('m', 'Minor'), ('M', 'Major'))
 
 class ArticleUpdate(models.Model):
     article_id = models.OneToOneField(Article, on_delete=models.CASCADE, primary_key=True)
-    prev_version = models.OneToOneField(Article, on_delete=models.CASCADE)
     orig_article = models.ForeignKey(Article, on_delete=models.CASCADE)
     update_type = models.CharField(max_length=20, choices=UPDATE_TYPES)
     new_author = models.BooleanField()
