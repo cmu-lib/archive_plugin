@@ -8,6 +8,9 @@ from plugins.disqus import plugin_settings
 from utils import setting_handler
 from utils import models
 
+from submission.models import Article
+from journal.models import Issue
+from models import Version
 
 def index(request):
     plugin = models.Plugin.objects.get(name=plugin_settings.SHORT_NAME)
@@ -50,7 +53,11 @@ def journal_archive(request):
     """
     Display list of overall journal archives
     """
-    pass
+    journal_versions = Issue.objects.all().order_by('-date')
+    context = {'journal_versions': journal_versions}
+    template = "archie_plugin/journal_version_list.html"
+
+    return render(request, template, context)
 
 def archive_list(request, archive_id):
     """

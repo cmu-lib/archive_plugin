@@ -8,7 +8,7 @@ from submission.models import Article
 
 UPDATE_TYPES = (('m', 'Minor'), ('M', 'Major'))
 
-class ArticleUpdate(models.Model):
+class Version(models.Model):
     article_id = models.OneToOneField(Article, on_delete=models.CASCADE, primary_key=True)
     orig_article = models.ForeignKey(Article, on_delete=models.CASCADE)
     update_type = models.CharField(max_length=20, choices=UPDATE_TYPES)

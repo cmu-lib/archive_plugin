@@ -1,0 +1,30 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% load i18n %}
+
+
+{% block title %}Archived Encyclopedia Versions{% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block body %}
+<section id="content" class="no-padding">
+    <div class="row">
+    {% for journal_version in journal_versions %}
+      <div class="medium-3 columns {% if forloop.last %}end{% endif %}">
+        <div class="box issue">
+          <a href="{% url 'journal_issue' journal_version.id %}" class="box-link"></a>
+          <span class="volume-number"><span>{% trans "Volume" %}</span> {{ journal_version.volume }}</span>
+          <div class="info-bar">
+            <p>{% trans "Issue" %} {{ journal_version.issue }} &bull; {{ journal_version.date.year }} &bull; {{ journal_version.articles.all.count }} {% trans "items" %}<br/>{{ journal_version.issue_title }}&nbsp;</p>
+          </div>
+        </div>
+      </div>
+        {% cycle '' '' '' '</div><div class="row">'%}
+    {% empty %}
+        <h3>There are no archives for this encyclopedia yet.</h3>
+    {% endfor %}
+    </div>
+</section>
+{% endblock %}
