@@ -53,9 +53,9 @@ def journal_archive(request):
     """
     Display list of overall journal archives
     """
-    journal_versions = Issue.objects.all().order_by('-date')
+    journal_versions = Issue.objects.filter(journal=request.journal).order_by('-date')
     context = {'journal_versions': journal_versions}
-    template = "archie_plugin/journal_version_list.html"
+    template = "archive_plugin/journal_version_list.html"
 
     return render(request, template, context)
 
