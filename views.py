@@ -61,10 +61,10 @@ def article_archive(request, article_id):
     Displays a list of previous version of an article
     """
     article = get_object_or_404(Article, pk=article_id)
-    base_article = Article.objects.get(pk=article.version.orig_article)
+    base_article = Article.objects.get(pk=article.version.base_article.pk)
 
     # need to deal with possibility update for article has been submitted but not published
-    versions = Article.objects.filter(version__orig_article=base_article.pk).order_by('-date_published')
+    versions = Article.objects.filter(version__base_article=base_article.pk).order_by('-date_published')
     # versions = base_article.version_set.all()
 
     template = "archive_plugin/article_version_list.html"
@@ -72,11 +72,22 @@ def article_archive(request, article_id):
 
     return render(request, template, context)
 
-def update_article(request, article_id):
+def update_article(request, article_id, base_article_id):
     """
-    Starts the process for authors to submit updates to an existing article
+    Registers a new article as an update of the original article
+    : article_id is the pk of the article the user is currently submitting
+    : base_article is the pk of the original article this is updating
+    The relationship between multiple articles is traced via publication dates
     """
-    pass
+    if request.method == "POST":
+        update_type = request.POST.get('update_type')
+        if update_type != 'new':
+            article = get_object_or_404(Article, pk=article_id)
+            base_article = get_object_or_404(Article, pk=base_article_id)
+            update = Version(article=article, base_article=base_article, update_type=update_type)
+            update.save()
+
+    # need to establish redirects for this function - where to go once update is registered?
 
 def request_update(request, article_id):
     """

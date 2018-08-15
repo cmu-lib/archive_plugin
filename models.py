@@ -7,8 +7,8 @@ from django.db import models
 from submission.models import Article
 
 class Version(models.Model):
-    article_id = models.OneToOneField(Article, on_delete=models.CASCADE)
-    orig_article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    article = models.OneToOneField(Article, on_delete=models.CASCADE)
+    base_article = models.ForeignKey(Article, on_delete=models.CASCADE)
     update_type = models.CharField(max_length=20)
     new_author = models.BooleanField(default=False)
     revision_date = models.DateTimeField(blank=True, null=True)
