@@ -69,6 +69,7 @@ def article_archive(request, article_id):
 
     # need to deal with possibility update for article has been submitted but not published
     versions = Article.objects.filter(version__orig_article=base_article.pk).order_by('-date_published')
+    # versions = base_article.version_set.all()
 
     template = "archive_plugin/article_version_list.html"
     context = {'main_article': base_article, 'versions': versions}
