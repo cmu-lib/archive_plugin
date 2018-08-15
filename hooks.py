@@ -61,4 +61,4 @@ def inject_request_edit(context):
     if not edit_article_enabled.value:
         return ''
 
-    return render_to_string('archive_plugin/inject_request_edit.html', request=request)
+    return render_to_string('archive_plugin/inject_request_edit.html', context={'article': context.get('article')}, request=request)

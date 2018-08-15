@@ -1,12 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 
-from plugins.disqus import forms
-from plugins.disqus import plugin_settings
+from plugins.archive_plugin import forms, plugin_settings
 
-from utils import setting_handler
-from utils import models
+from utils import setting_handler, models
+from utils.notify_helpers import send_email_with_body_from_user
 
 from submission.models import Article
 from journal.models import Issue
@@ -67,7 +66,7 @@ def article_archive(request, article_id):
     :article_id = an int representing the pk of the article requested
     Displays a list of previous version of an article
     """
-    article = Article.objects.get(pk=article_id)
+    article = get_object_or_404(Article, pk=article_id)
     base_article = Article.objects.get(pk=article.version.orig_article)
 
     # need to deal with possibility update for article has been submitted but not published
@@ -84,6 +83,26 @@ def update_article(request, article_id):
     Starts the process for authors to submit updates to an existing article
     """
     pass
+
+def request_update(request, article_id):
+    """
+    Processes request from editor to have an entry updated, sends email to registered article owner with update request.
+    article_id is pk of the article to be updated
+    """
+    article = get_object_or_404(Article, pk=article_id)
+    subject = "{} Article Update Request: '{}'".format(article.journal.code, article.title)
+    to = article.owner.email
+    owner_name = article.owner.first_name + " " + article.owner.last_name
+    body = """
+            <p>Dear {0},</p>
+            <p>The editorial board of <i>{1}</i> requests that an article for which you are marked as the owner, '{2},' be updated. Please follow the link below to begin the submission process.</p>
+            <p>Best,<br>Editorial Board, <i>{1}</i></p>
+    """.format(owner_name, article.journal.name, article.title)
+
+    send_email_with_body_from_user(request, subject, to, body)
+    messages.add_message(request, messages.SUCCESS, "Email request sent.")
+
+    return redirect(reverse('manage_archive_article', kwargs={'article_id': article.pk}))
 
 
 # use utils.notify_helpers function send_email_with_body_from_user(request, subject, to, body, log_dict=None) to email user about update request
