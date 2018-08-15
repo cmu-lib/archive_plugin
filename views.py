@@ -45,12 +45,6 @@ def index(request):
 
     return render(request, template, context)
 
-
-def view_archive(request):
-    pass
-    # TODO: write logic for querying database, viewing the relevant archived version of journal or article
-    # may need to write two versions of function based on whether viewing archived version of article or journal
-
 def journal_archive(request):
     """
     Display list of overall journal archives
