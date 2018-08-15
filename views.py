@@ -13,6 +13,9 @@ from journal.models import Issue
 from models import Version
 
 def index(request):
+    """
+    Creates the admin page for turning the plugin's elements on or off
+    """
     plugin = models.Plugin.objects.get(name=plugin_settings.SHORT_NAME)
     
     journal_archive_enabled = setting_handler.get_plugin_setting(plugin, 'journal_archive_enabled', request.journal, create=True,
@@ -81,3 +84,7 @@ def update_article(request, article_id):
     Starts the process for authors to submit updates to an existing article
     """
     pass
+
+
+# use utils.notify_helpers function send_email_with_body_from_user(request, subject, to, body, log_dict=None) to email user about update request
+# article.authors is many to many - article.authors.all() or use article.owner?
