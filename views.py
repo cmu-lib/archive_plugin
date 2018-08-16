@@ -67,6 +67,7 @@ def article_archive(request, article_id):
     :article_id = an int representing the pk of the article requested
     Displays a list of previous version of an article
     """
+    # need to update this based on updated model
     article = get_object_or_404(Article, pk=article_id)
     base_article = Article.objects.get(pk=article.version.base_article.pk)
 
@@ -108,7 +109,7 @@ def update_article(request, article_id, base_article_id):
             update = Version(article=article, base_article=base_article, update_type=update_type)
             update.save()
 
-    # need to establish redirects for this function - where to go once update is registered?
+    # need to rewrite this view based on updated templating and model
 
 @editor_user_required
 def request_update(request, article_id):
@@ -116,6 +117,7 @@ def request_update(request, article_id):
     Processes request from editor to have an entry updated, sends email to registered article owner with update request.
     article_id is pk of the article to be updated
     """
+    # need to add transactional_emails.py and offload logic there
     article = get_object_or_404(Article, pk=article_id)
     subject = "{} Article Update Request: '{}'".format(article.journal.code, article.title)
     to = article.owner.email
