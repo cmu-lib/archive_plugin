@@ -25,10 +25,13 @@ def index(request):
                                                         pretty='Enable Article Archive Display', types='boolean').processed_value
     edit_article_enabled = setting_handler.get_plugin_setting(plugin, 'edit_archive_enabled', request.journal, create=True,
                                                         pretty='Enable Article Editing and Updating', types='boolean').processed_value
+    request_template = setting_handler.get_plugin_setting(plugin, 'request_email_template', request.journal, create=True,
+                                                        pretty='Request Email Template', types='rich-text').processed_value
     
     admin_form = forms.ArchiveAdminForm(initial={'journal_archive_enabled': journal_archive_enabled, 
                                                 'article_archive_enabled': article_archive_enabled,
-                                                'edit_article_enabled': edit_article_enabled})
+                                                'edit_article_enabled': edit_article_enabled,
+                                                'request_template': request_template})
 
     if request.POST:
         admin_form = forms.ArchiveAdminForm(request.POST)
