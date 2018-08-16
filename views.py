@@ -6,11 +6,13 @@ from plugins.archive_plugin import forms, plugin_settings
 
 from utils import setting_handler, models
 from utils.notify_helpers import send_email_with_body_from_user
+from security.decorators import editor_user_required, author_user_required
 
 from submission.models import Article
 from journal.models import Issue
 from models import Version
 
+@editor_user_required
 def index(request):
     """
     Creates the admin page for turning the plugin's elements on or off
@@ -45,6 +47,7 @@ def index(request):
 
     return render(request, template, context)
 
+
 def journal_archive(request):
     """
     Display list of overall journal archives
@@ -54,6 +57,7 @@ def journal_archive(request):
     template = "archive_plugin/journal_version_list.html"
 
     return render(request, template, context)
+
 
 def article_archive(request, article_id):
     """
@@ -72,6 +76,20 @@ def article_archive(request, article_id):
 
     return render(request, template, context)
 
+@author_user_required
+def update_article_prompt(request, article_id):
+    """
+    Prompts the user to select whether their edit is major or minor
+    : article_id is the pk of the article
+    """
+    article = get_object_or_404(Article, pk=article_id)
+    
+    template = 'archive_plugin/inject_edit_article_selector.html'
+    context = {'article': article}
+    
+    return render(request, template, context)
+
+@author_user_required
 def update_article(request, article_id, base_article_id):
     """
     Registers a new article as an update of the original article
@@ -89,6 +107,7 @@ def update_article(request, article_id, base_article_id):
 
     # need to establish redirects for this function - where to go once update is registered?
 
+@editor_user_required
 def request_update(request, article_id):
     """
     Processes request from editor to have an entry updated, sends email to registered article owner with update request.

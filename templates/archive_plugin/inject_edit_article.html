@@ -1,15 +1,3 @@
 <div>
-    <form method="POST" action="">
-        {% csrf_token %}
-        <fieldset>
-            <legend>Are you submitting a new article or a revision to an existing article?</legend>
-            <input type="radio" name="update_type" value="new" checked> New<br>
-            <input type="radio" name="update_type" value="revision_min"> Minor Revision (typo fix)<br>
-            <input type="radio" name="update_type" value="revision_maj"> Major Revision (content change)<br>
-            <input type="submit" value="Submit">
-        </fieldset>
-    </form>
+    <a class="success button" href="{% url 'update_type' article.pk %}">Update Article</a>
 </div>
-
-<!-- TODO: If a user selects that they are submitting a revision, prompt them to select which article they are editing,
-            pass information to table for new edited article -->

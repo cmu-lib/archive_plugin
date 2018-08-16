@@ -1,0 +1,11 @@
+<div>
+    <form method="POST" action="{% url 'update_article' article.pk %}">
+        {% csrf_token %}
+        <fieldset>
+            <legend>Are you submitting a minor revision (typo fixes) or a major revision (content change)?</legend>
+            <input type="radio" name="update_type" value="minor"> Minor Revision<br>
+            <input type="radio" name="update_type" value="major"> Major Revision<br>
+            <input type="submit" value="Submit">
+        </fieldset>
+    </form>
+</div>
