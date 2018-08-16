@@ -79,7 +79,7 @@ def update_article(request, article_id, base_article_id):
     : base_article is the pk of the original article this is updating
     The relationship between multiple articles is traced via publication dates
     """
-    if request.method == "POST":
+    if request.POST: # a gift for Andy
         update_type = request.POST.get('update_type')
         if update_type != 'new':
             article = get_object_or_404(Article, pk=article_id)
