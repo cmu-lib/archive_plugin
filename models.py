@@ -24,8 +24,13 @@ class Version(models.Model):
     @property
     def base_article(self):
         """
-        Follow parent articles all the way down to the original base_article
+        Follow tree of parent articles down to the original base_article
         """
-        pass
+        # check if parent article is also an update, if so access its parent recursively
+        if hasattr(self.parent_article, 'version'):
+            return self.parent_article.version.base_article
+        # if parent is not an update, return it
+        else:
+            return self.parent_article
 
 # will having multiple relationships of different types (one-to-one and many-to-one) to submission.Article work?
