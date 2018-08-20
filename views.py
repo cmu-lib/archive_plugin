@@ -1,8 +1,10 @@
+import datetime
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 
-from plugins.archive_plugin import forms, plugin_settings
+from plugins.archive_plugin import forms, plugin_settings, logic
 
 from utils import setting_handler, models
 from utils.notify_helpers import send_email_with_body_from_user
@@ -67,7 +69,7 @@ def article_archive(request, article_id):
     :article_id = an int representing the pk of the article requested
     Displays a list of previous version of an article
     """
-    # need to update this based on updated model
+    # NEED TO UPDATE THIS BASED ON UPDATED MODEL
     article = get_object_or_404(Article, pk=article_id)
     base_article = Article.objects.get(pk=article.version.base_article.pk)
 
@@ -79,6 +81,7 @@ def article_archive(request, article_id):
     context = {'main_article': base_article, 'versions': versions}
 
     return render(request, template, context)
+
 
 @author_user_required
 def update_article_prompt(request, article_id):
@@ -93,8 +96,9 @@ def update_article_prompt(request, article_id):
     
     return render(request, template, context)
 
+
 @author_user_required
-def update_article(request, article_id, base_article_id):
+def update_article(request, article_id):
     """
     Registers a new article as an update of the original article
     : article_id is the pk of the article the user is currently submitting
@@ -103,13 +107,14 @@ def update_article(request, article_id, base_article_id):
     """
     if request.POST: # a gift for Andy
         update_type = request.POST.get('update_type')
-        if update_type != 'new':
-            article = get_object_or_404(Article, pk=article_id)
-            base_article = get_object_or_404(Article, pk=base_article_id)
-            update = Version(article=article, base_article=base_article, update_type=update_type)
-            update.save()
+        parent_article = get_object_or_404(Article, pk=article_id)
+        new_article = logic.copy_article_for_update(parent_article.pk)
 
-    # need to rewrite this view based on updated templating and model
+        new_version = Version(article=new_article, parent_article=parent_article, update_type=update_type)
+        new_version.save()
+
+        return redirect(reverse('submit_info', kwargs={'article_id': new_article.pk}))
+
 
 @editor_user_required
 def request_update(request, article_id):
@@ -118,6 +123,7 @@ def request_update(request, article_id):
     article_id is pk of the article to be updated
     """
     # need to add transactional_emails.py and offload logic there
+    # also need to update to reflect to redirect user through new article update system (selector page for update type, pass article_id)
     article = get_object_or_404(Article, pk=article_id)
     subject = "{} Article Update Request: '{}'".format(article.journal.code, article.title)
     to = article.owner.email
