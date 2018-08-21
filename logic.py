@@ -28,3 +28,17 @@ def copy_article_for_update(article_id):
     # Save and return copied article
     article.save()
     return article
+
+
+def register_update_time(**kwargs):
+    """
+    Once article published, update its entry in version table to reflect publication date
+    Receives two kwargs: request and article
+    """
+
+    article = kwargs.get('article')
+
+    if hasattr(article, 'version'):
+        v = article.version
+        v.revision_date = article.date_published
+        v.save()

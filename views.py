@@ -3,6 +3,7 @@ import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 
 from plugins.archive_plugin import forms, plugin_settings, logic
 
@@ -66,20 +67,31 @@ def journal_archive(request):
 
 def article_archive(request, article_id):
     """
-    :article_id = an int representing the pk of the article requested
+    : article_id = an int representing the pk of the article requested
     Displays a list of previous version of an article
     """
-    # NEED TO UPDATE THIS BASED ON UPDATED MODEL
+    # get current article
     article = get_object_or_404(Article, pk=article_id)
-    base_article = Article.objects.get(pk=article.version.base_article.pk)
 
-    # need to deal with possibility update for article has been submitted but not published
-    versions = Article.objects.filter(version__base_article=base_article.pk).order_by('-date_published')
-    # versions = base_article.version_set.all()
+    # ensure current article is either an update or the parent of another article
+    if hasattr(article, 'version') or hasattr(article, 'updates'):
+        if hasattr(article, 'version'):
+            base_article = article.version.base_article
+        else:
+            base_article = article
+
+        # get queryset of all articles with same base_article (including original base article)
+        versions = Article.objects.get(Q(version__base_article=base_article) | Q(pk=base_article.pk)).filter(stage='Published').order_by('-date_published')
+
+        # prepare and return page
+        
+        context = {'base_article': base_article, 'versions': versions}
+
+    # if no updates, just return the single entry
+    else:
+        context = {'base_article': article, 'versions': [article]}
 
     template = "archive_plugin/article_version_list.html"
-    context = {'main_article': base_article, 'versions': versions}
-
     return render(request, template, context)
 
 
