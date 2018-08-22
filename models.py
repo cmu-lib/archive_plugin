@@ -21,7 +21,6 @@ class Version(models.Model):
     new_author = models.BooleanField(default=False)
     revision_date = models.DateTimeField(blank=True, null=True)
     is_published = models.BooleanField(default=False)
-    # perhaps add "is_published" boolean field to track whether the updated version has been published?
 
     @property
     def base_article(self):
