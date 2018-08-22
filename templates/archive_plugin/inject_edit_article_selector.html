@@ -6,6 +6,9 @@
 {% block title %}{% trans "Update an Article" %}{% endblock title %}
 
 {% block body %}
+    <h3>
+        Article #{{ article.pk }}: {{ article.title }}
+    </h3>
     <article>
         <form method="POST" action="{% url 'update_article' article.pk %}">
             <div id="content submission-content" class="box">
@@ -13,10 +16,10 @@
                 <fieldset>
                     <legend>Are you submitting a minor revision (typo fixes) or a major revision (content change)?</legend>
                     <div class="content submission-content">
-                        <input type="radio" name="update_type" value="minor"> Minor Revision<br>
+                        <input type="radio" name="update_type" value="minor"> Minor Revision
                     </div>
                     <div class="content submission-content">
-                        <input type="radio" name="update_type" value="major"> Major Revision<br>
+                        <input type="radio" name="update_type" value="major"> Major Revision
                     </div>
                     <button class="success button pull-right" type="submit" name="begin_revision"><i class="fa fa-check">&nbsp;</i>{% trans "Begin Revision" %}</button>
                 </fieldset>
