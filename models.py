@@ -33,5 +33,3 @@ class Version(models.Model):
         # if parent is not an update, return it
         else:
             return self.parent_article
-
-# will having multiple relationships of different types (one-to-one and many-to-one) to submission.Article work?
