@@ -1,11 +1,26 @@
-<div>
-    <form method="POST" action="{% url 'update_article' article.pk %}">
-        {% csrf_token %}
-        <fieldset>
-            <legend>Are you submitting a minor revision (typo fixes) or a major revision (content change)?</legend>
-            <input type="radio" name="update_type" value="minor"> Minor Revision<br>
-            <input type="radio" name="update_type" value="major"> Major Revision<br>
-            <input type="submit" value="Submit">
-        </fieldset>
-    </form>
-</div>
+{% extends "admin/core/base.html" %}
+{% load static from staticfiles %}
+{% load i18n %}
+{% load foundation %}
+
+{% block title %}{% trans "Update an Article" %}{% endblock title %}
+
+{% block body %}
+    <article>
+        <form method="POST" action="{% url 'update_article' article.pk %}">
+            <div id="content submission-content" class="box">
+                {% csrf_token %}
+                <fieldset>
+                    <legend>Are you submitting a minor revision (typo fixes) or a major revision (content change)?</legend>
+                    <div class="content submission-content">
+                        <input type="radio" name="update_type" value="minor"> Minor Revision<br>
+                    </div>
+                    <div class="content submission-content">
+                        <input type="radio" name="update_type" value="major"> Major Revision<br>
+                    </div>
+                    <button class="success button pull-right" type="submit" name="begin_revision"><i class="fa fa-check">&nbsp;</i>{% trans "Begin Revision" %}</button>
+                </fieldset>
+            </div>
+        </form>
+    </article>
+{% endblock body %}
