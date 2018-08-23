@@ -55,6 +55,7 @@ def inject_journal_archive(context):
 
     return render_to_string('archive_plugin/inject_journal_archive.html', request=request)
 
+
 def inject_request_edit(context):
     """
     Injects a button for editors to request that an article be edited

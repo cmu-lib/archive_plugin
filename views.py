@@ -141,7 +141,3 @@ def request_update(request, article_id):
     messages.add_message(request, messages.SUCCESS, "Email request sent.")
 
     return redirect(reverse('manage_archive_article', kwargs={'article_id': article.pk}))
-
-
-# use utils.notify_helpers function send_email_with_body_from_user(request, subject, to, body, log_dict=None) to email user about update request
-# article.authors is many to many - article.authors.all() or use article.owner?
