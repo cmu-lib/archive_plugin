@@ -5,7 +5,8 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 
-from plugins.archive_plugin import forms, plugin_settings, logic
+from plugins.archive_plugin import forms, plugin_settings, logic, transactional_emails
+from plugins.archive_plugin.models import Version
 
 from utils import setting_handler, models
 from utils.notify_helpers import send_email_with_body_from_user
@@ -13,7 +14,6 @@ from security.decorators import editor_user_required, author_user_required
 
 from submission.models import Article
 from journal.models import Issue
-from models import Version
 
 @editor_user_required
 def index(request):
@@ -134,19 +134,10 @@ def request_update(request, article_id):
     Processes request from editor to have an entry updated, sends email to registered article owner with update request.
     article_id is pk of the article to be updated
     """
-    # need to add transactional_emails.py and offload logic there
-    # also need to update to reflect to redirect user through new article update system (selector page for update type, pass article_id)
+    
     article = get_object_or_404(Article, pk=article_id)
-    subject = "{} Article Update Request: '{}'".format(article.journal.code, article.title)
-    to = article.owner.email
-    owner_name = article.owner.first_name + " " + article.owner.last_name
-    body = """
-            <p>Dear {0},</p>
-            <p>The editorial board of <i>{1}</i> requests that an article for which you are marked as the owner, '{2},' be updated. Please follow the link below to begin the submission process.</p>
-            <p>Best,<br>Editorial Board, <i>{1}</i></p>
-    """.format(owner_name, article.journal.name, article.title)
+    transactional_emails.send_update_request_email(request, article)
 
-    send_email_with_body_from_user(request, subject, to, body)
     messages.add_message(request, messages.SUCCESS, "Email request sent.")
 
     return redirect(reverse('manage_archive_article', kwargs={'article_id': article.pk}))
