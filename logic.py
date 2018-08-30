@@ -1,6 +1,9 @@
-import datetime
+from datetime import datetime
 
 from submission.models import Article
+from journal.models import Issue
+
+from archive_plugin.models import Version
 
 def copy_article_for_update(article_id):
     """
@@ -15,7 +18,7 @@ def copy_article_for_update(article_id):
     article.save()
 
     # Reset date information
-    article.date_started = datetime.datetime.now()
+    article.date_started = datetime.now()
     article.date_accepted = None
     article.date_declined = None
     article.date_submitted = None
@@ -43,3 +46,24 @@ def register_update_time(**kwargs):
         v.revision_date = article.date_published
         v.is_published = True
         v.save()
+
+
+def run_archive(request):
+    """
+    Function to automatically run an archive containing all published articles
+    Will only include the most recent version of articles with multiple versions
+    """
+    # get date and convert to string in format 'mm/dd/YYYY'
+    curr_date = datetime.now()
+    pretty_date = curr_date.strftime('%m/%d/%Y')
+
+    # get list of current, published articles
+    articles = Article.objects.filter()
+
+    # set up info for issue
+    title = pretty_date
+    volume = None # how should I automatically select?
+    issue = None # how should I automatically select?
+    date = curr_date
+    issue_description = "Archive: " + pretty_date
+    issue_type = 'Issue'
