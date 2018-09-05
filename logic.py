@@ -58,7 +58,11 @@ def run_archive(request):
     pretty_date = curr_date.strftime('%m/%d/%Y')
 
     # get list of current, published articles
-    articles = Article.objects.filter()
+    articles = list(Article.objects.all().sort_by("title"))
+
+    for article in list(articles):
+        if article.updates or article.stage != "Published":
+            articles.remove(article)
 
     # set up info for issue
     title = pretty_date
@@ -66,4 +70,7 @@ def run_archive(request):
     issue = None # how should I automatically select?
     date = curr_date
     issue_description = "Archive: " + pretty_date
-    issue_type = 'Issue'
+    issue_type = "Issue"
+
+    new_issue = Issue(journal=request.journal, volume=volume, issue=issue, issue_title=title, date=date, issue_type=issue_type, issue_description=issue_description)
+    new_issue.save()
