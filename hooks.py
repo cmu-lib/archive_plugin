@@ -48,7 +48,7 @@ def inject_journal_archive(context):
     request = context.get('request')
     plugin = models.Plugin.objects.get(name=plugin_settings.SHORT_NAME)
 
-    journal_archive_enabled = setting_handler.get_plugin_setting(plugin, 'article_archive_enabled', request.journal)
+    journal_archive_enabled = setting_handler.get_plugin_setting(plugin, 'journal_archive_enabled', request.journal)
 
     if not journal_archive_enabled.value:
         return ''
