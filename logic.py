@@ -74,3 +74,4 @@ def run_archive(request):
 
     new_issue = Issue(journal=request.journal, volume=volume, issue=issue, issue_title=title, date=date, issue_type=issue_type, issue_description=issue_description)
     new_issue.save()
+    
