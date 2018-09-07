@@ -18,7 +18,8 @@ class Command(BaseCommand):
         archive_path = os.path.dirname(os.path.realpath(__file__))
 
         #add new cron job
-        job = cron.new(command="{}/bin/python3 {}/run.py".format(virtualenv, archive_path))
+        job = cron.new(command="{}/bin/python3 {}/manage.py create_archive".format(virtualenv, settings.BASE_DIR))
+
 
         #set job to run quarterly (every 3 months)
         job.month.every(3)
