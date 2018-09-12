@@ -29,8 +29,10 @@ def install():
                                                 pretty_name='Request Email Template',
                                                 description='Template for the email sent to authors when an editor requests an article be updated',
                                                 is_translatable=False)
+    """
     models.PluginSetting.objects.get_or_create(name='archive_freq', plugin=new_plugin, types='select', pretty_name='Archive Frequency',
                                                 description='Determines how often journal archives are run.', is_translatable=False)
+    """
                                                 # TODO: set options for archive frequency (quarterly, biannually, yearly)
 
     
@@ -48,9 +50,9 @@ def install():
 
 
 def hook_registry():
-    '''
+    """
     Run when sites with hooks are loaded to define function to be run
-    '''
+    """
     return {'journal_archive_list': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_journal_archive'},
             'article_archive_list': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_article_archive'},
             'edit_article': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_edit_article'},
