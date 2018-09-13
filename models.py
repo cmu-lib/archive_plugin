@@ -14,6 +14,7 @@ UPDATE_CHOICES = [
     (UPDATE_TYPE_MAJOR, 'Major')
 ]
 
+
 class Version(models.Model):
     article = models.OneToOneField(Article, null=True, on_delete=models.SET_NULL)
     parent_article = models.ForeignKey(Article, null=True, on_delete=models.SET_NULL, related_name='updates')
