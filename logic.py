@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 
 from submission.models import Article
 
-from archive_plugin.models import Version
+from plugins.archive_plugin.models import Version
 
 
 def copy_article_for_update(article_id):
