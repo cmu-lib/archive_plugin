@@ -5,6 +5,7 @@ from journal.models import Issue
 
 from archive_plugin.models import Version
 
+
 def copy_article_for_update(article_id):
     """
     Create copy of article with passed id,

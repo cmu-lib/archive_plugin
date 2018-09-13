@@ -17,20 +17,23 @@ def install():
         print('Plugin {0} is already installed.'.format(PLUGIN_NAME))
 
     models.PluginSetting.objects.get_or_create(name='journal_archive_enabled', plugin=new_plugin, types='boolean',
-                                               pretty_name='Enable Journal Archive Display', description='Enable Journal Archive Display',
+                                               pretty_name='Enable Journal Archive Display',
+                                               description='Enable Journal Archive Display',
                                                is_translatable=False)
     models.PluginSetting.objects.get_or_create(name='article_archive_enabled', plugin=new_plugin, types='boolean',
-                                                pretty_name='Enable Article Archive Display', description='Enable Article Archive Diesplay',
-                                                is_translatable=False)
+                                               pretty_name='Enable Article Archive Display',
+                                               description='Enable Article Archive Diesplay',
+                                               is_translatable=False)
     models.PluginSetting.objects.get_or_create(name='edit_article_enabled', plugin=new_plugin, types='boolean',
-                                                pretty_name='Enable Article Editing and Updating', description='Enable Article Editing and Updating',
-                                                is_translatable=False)
+                                               pretty_name='Enable Article Editing and Updating',
+                                               description='Enable Article Editing and Updating',
+                                               is_translatable=False)
     models.PluginSetting.objects.get_or_create(name='request_email_template', plugin=new_plugin, types='rich-text',
-                                                pretty_name='Request Email Template',
-                                                description='Template for the email sent to authors when an editor requests an article be updated',
-                                                is_translatable=False)
+                                               pretty_name='Request Email Template',
+                                               description='Template for the email sent to authors '
+                                                           'when an editor requests an article be updated',
+                                               is_translatable=False)
 
-    
     message_text = """
         <p>Dear {{ article.corresponsdence_author.full_name }},</p>
         <p>The editorial board of <i>{{ article.journal.name }}</i> requests that the article, '{{ article.title }},' be updated. Please follow the link below to begin the submission process.</p>
@@ -44,9 +47,9 @@ def install():
 
 
 def hook_registry():
-    '''
+    """
     Run when sites with hooks are loaded to define function to be run
-    '''
+    """
     return {'journal_archive_list': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_journal_archive'},
             'article_archive_list': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_article_archive'},
             'edit_article': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_edit_article'},
