@@ -7,6 +7,12 @@ MANAGER_URL = 'archive_index'
 
 from utils import models, setting_handler
 from journal.models import Journal
+from events import logic as event_logic
+from plugins.archive_plugin.events import register_update_time
+
+
+event_logic.Events.register_for_event(event_logic.Events.ON_AUTHOR_PUBLICATION, register_update_time)
+
 
 def install():
     new_plugin, created = models.Plugin.objects.get_or_create(name=SHORT_NAME, version=VERSION, enabled=True)
@@ -17,25 +23,23 @@ def install():
         print('Plugin {0} is already installed.'.format(PLUGIN_NAME))
 
     models.PluginSetting.objects.get_or_create(name='journal_archive_enabled', plugin=new_plugin, types='boolean',
-                                               pretty_name='Enable Journal Archive Display', description='Enable Journal Archive Display',
+                                               pretty_name='Enable Journal Archive Display',
+                                               description='Enable Journal Archive Display',
                                                is_translatable=False)
     models.PluginSetting.objects.get_or_create(name='article_archive_enabled', plugin=new_plugin, types='boolean',
-                                                pretty_name='Enable Article Archive Display', description='Enable Article Archive Diesplay',
-                                                is_translatable=False)
+                                               pretty_name='Enable Article Archive Display',
+                                               description='Enable Article Archive Diesplay',
+                                               is_translatable=False)
     models.PluginSetting.objects.get_or_create(name='edit_article_enabled', plugin=new_plugin, types='boolean',
-                                                pretty_name='Enable Article Editing and Updating', description='Enable Article Editing and Updating',
-                                                is_translatable=False)
+                                               pretty_name='Enable Article Editing and Updating',
+                                               description='Enable Article Editing and Updating',
+                                               is_translatable=False)
     models.PluginSetting.objects.get_or_create(name='request_email_template', plugin=new_plugin, types='rich-text',
-                                                pretty_name='Request Email Template',
-                                                description='Template for the email sent to authors when an editor requests an article be updated',
-                                                is_translatable=False)
-    """
-    models.PluginSetting.objects.get_or_create(name='archive_freq', plugin=new_plugin, types='select', pretty_name='Archive Frequency',
-                                                description='Determines how often journal archives are run.', is_translatable=False)
-    """
-                                                # TODO: set options for archive frequency (quarterly, biannually, yearly)
+                                               pretty_name='Request Email Template',
+                                               description='Template for the email sent to authors '
+                                                           'when an editor requests an article be updated',
+                                               is_translatable=False)
 
-    
     message_text = """
         <p>Dear {{ article.corresponsdence_author.full_name }},</p>
         <p>The editorial board of <i>{{ article.journal.name }}</i> requests that the article, '{{ article.title }},' be updated. Please follow the link below to begin the submission process.</p>
