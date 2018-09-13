@@ -7,6 +7,12 @@ MANAGER_URL = 'archive_index'
 
 from utils import models, setting_handler
 from journal.models import Journal
+from events import logic as event_logic
+from plugins.archive_plugin.events import register_update_time
+
+
+event_logic.Events.register_for_event(event_logic.Events.ON_AUTHOR_PUBLICATION, register_update_time)
+
 
 def install():
     new_plugin, created = models.Plugin.objects.get_or_create(name=SHORT_NAME, version=VERSION, enabled=True)
