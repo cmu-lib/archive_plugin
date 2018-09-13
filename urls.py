@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from plugins.archive_plugin import views
 
-url_patterns = [
+urlpatterns = [
     url(r'^$', views.index, name='archive_index'),
     url(r'^journal/$', views.journal_archive, name='journal_archive'),
     url(r'^article/(?P<article_id>\d+)/$', views.article_archive, name='article_archive'),
