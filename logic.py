@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.shortcuts import get_object_or_404
 
 from submission.models import Article
 
@@ -43,8 +44,17 @@ def register_update_time(**kwargs):
     if hasattr(article, 'version'):
         v = article.version
         v.revision_date = article.date_published
-        v.is_published = True
         v.save()
 
 
+def get_base_article(article_id=None):
+    """
+    Takes an article and gets its base article - for use with registering a new version
+    """
+    article = get_object_or_404(Article, pk=article_id)
+
+    if hasattr(article, 'version'):
+		return get_base_article(article.version.parent_article.pk)
+	else:
+		return article
     

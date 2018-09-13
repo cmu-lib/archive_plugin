@@ -12,7 +12,6 @@ def send_update_request_email(request, article):
 
     subject = "{} Article Update Request: '{}'".format(article.journal.code, article.title)
     to = article.correspondence_author.email
-    body = setting_handler.get_plugin_setting(plugin, 'request_email_template', request.journal, create=False,
-                                                pretty='Request Email Template', types='rich-text').processed_value
+    body = setting_handler.get_plugin_setting(plugin, 'request_email_template', request.journal).processed_value
 
     send_email_with_body_from_user(request, subject, to, body)

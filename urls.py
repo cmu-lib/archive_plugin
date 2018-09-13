@@ -8,4 +8,5 @@ url_patterns = [
     url(r'^article/(?P<article_id>\d+)/update_type/$', views.update_article_prompt, name='update_type'),
     url(r'^article/(?P<article_id>\d+)/update/$', views.update_article, name='update_article'),
     url(r'^article/(?P<article_id>\d+)/request_update/$', views.request_update, name='request_update'),
+    url(r'^browse_entries/$', views.browse_entries, name='browse_entries'),
 ]

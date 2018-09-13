@@ -48,5 +48,9 @@ class Command(BaseCommand):
                 for article in Article.objects.filter(journal=journal).order_by("title"):
                     if (not hasattr(article, "updates")) and (article.stage == "Published"):
                         new_issue.articles.add(article)
+                        if hasattr(article, "version"):
+                            v = article.version
+                            v.is_archived = True
+                            v.save()
 
                 new_issue.save()

@@ -122,8 +122,9 @@ def update_article(request, article_id):
         update_type = request.POST.get('update_type')
         parent_article = get_object_or_404(Article, pk=article_id)
         new_article = logic.copy_article_for_update(parent_article.pk)
+        base_article = logic.get_base_article(parent_article.pk)
 
-        new_version = Version(article=new_article, parent_article=parent_article, update_type=update_type)
+        new_version = Version(article=new_article, parent_article=parent_article, update_type=update_type, base_article=base_article)
         new_version.save()
 
         return redirect(reverse('submit_info', kwargs={'article_id': new_article.pk}))
@@ -142,3 +143,17 @@ def request_update(request, article_id):
     messages.add_message(request, messages.SUCCESS, "Email request sent.")
 
     return redirect(reverse('manage_archive_article', kwargs={'article_id': article.pk}))
+
+
+def browse_entries(request):
+    """
+    Custom view for browsing all current entries in the encyclopedia
+    """
+    # get all articles from journal that are published and the most recent copies
+    final_articles =  Article.objects.filter(journal=journal, stage="Published", updates__isnull=True).order_by("title")
+
+    # set up context and render response
+    context = {"articles": final_articles}
+    template = "archive_plugin/browse.html"
+
+    return render(request, template, context)

@@ -12,7 +12,7 @@ def inject_edit_article(context):
 
     edit_article_enabled = setting_handler.get_plugin_setting(plugin, 'edit_article_enabled', request.journal)
 
-    if not edit_article_enabled.value:
+    if not edit_article_enabled.processed_value:
         return ''
 
     return render_to_string(
@@ -31,7 +31,7 @@ def inject_article_archive(context):
 
     article_archive_enabled = setting_handler.get_plugin_setting(plugin, 'article_archive_enabled', request.journal)
 
-    if not article_archive_enabled.value:
+    if not article_archive_enabled.processed_value:
         return ''
 
     return render_to_string(
@@ -50,7 +50,7 @@ def inject_journal_archive(context):
 
     journal_archive_enabled = setting_handler.get_plugin_setting(plugin, 'journal_archive_enabled', request.journal)
 
-    if not journal_archive_enabled.value:
+    if not journal_archive_enabled.processed_value:
         return ''
 
     return render_to_string('archive_plugin/inject_journal_archive.html', request=request)
@@ -65,7 +65,7 @@ def inject_request_edit(context):
 
     edit_article_enabled = setting_handler.get_plugin_setting(plugin, 'edit_article_enabled', request.journal)
 
-    if not edit_article_enabled.value:
+    if not edit_article_enabled.processed_value:
         return ''
 
     return render_to_string(

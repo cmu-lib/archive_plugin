@@ -14,7 +14,7 @@
             <h3>{{ base_article.title }}: Revision History</h3>
             <ul>
                 {% for version in versions %}
-                    <li><a href="{% url 'article_view' version.identifier.id_type version.identifier.identifier %}">{{ version.date_published }}</a>: {% if version.version %}{{ version.version.update_type }}{% endif %}</li>
+                    <li><a href="{% url 'article_view' version.identifier.id_type version.identifier.identifier %}">{{ version.date_published }}</a>: {% if version.version %}{{ version.version.update_type }}{% if not version.version.is_archived %} NOT ARCHIVED{% endif %}{% endif %}</li>
                 {% endfor %}
             </ul>
         </div>
