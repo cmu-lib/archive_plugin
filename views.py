@@ -2,7 +2,7 @@ import datetime
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models import Q
 
 from plugins.archive_plugin import forms, plugin_settings, logic, transactional_emails
@@ -82,7 +82,7 @@ def article_archive(request, article_id):
             base_article = article
 
         # get queryset of all articles with same base_article (including original base article)
-        versions = Article.objects.get(Q(version__base_article=base_article) | Q(pk=base_article.pk)).filter(stage='Published').order_by('-date_published')
+        versions = Article.objects.filter(Q(version__base_article=base_article) | Q(pk=base_article.pk)).filter(stage='Published').order_by('-date_published')
 
         # prepare and return page
         
@@ -150,7 +150,7 @@ def browse_entries(request):
     Custom view for browsing all current entries in the encyclopedia
     """
     # get all articles from journal that are published and the most recent copies
-    final_articles =  Article.objects.filter(journal=journal, stage="Published", updates__isnull=True).order_by("title")
+    final_articles =  Article.objects.filter(journal=request.journal, stage="Published", updates__isnull=True).order_by("title")
 
     # set up context and render response
     context = {"articles": final_articles}
