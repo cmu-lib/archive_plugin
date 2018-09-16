@@ -1,6 +1,7 @@
 from utils.notify_helpers import send_email_with_body_from_user
 from utils import setting_handler, models
 from plugins.archive_plugin import plugin_settings
+from django.template import Template, RequestContext, Context
 
 def send_update_request_email(request, article):
     """
@@ -12,6 +13,15 @@ def send_update_request_email(request, article):
 
     subject = "{} Article Update Request: '{}'".format(article.journal.code, article.title)
     to = article.correspondence_author.email
-    body = setting_handler.get_plugin_setting(plugin, 'request_email_template', request.journal).processed_value
+    template = setting_handler.get_plugin_setting(plugin, 'request_email_template', request.journal).processed_value
+    template = template.replace('\r', '')
+    template = template.replace('\n', '')
+
+    context = {"article": article, "request": request}
+
+    template = Template(template)
+    con = RequestContext(request)
+    con.push(context)
+    body = template.render(con)
 
     send_email_with_body_from_user(request, subject, to, body)

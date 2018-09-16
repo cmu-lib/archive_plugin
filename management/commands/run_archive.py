@@ -6,7 +6,7 @@ import os
 from crontab import CronTab
 
 class Command(BaseCommand):
-    help = "Automatically run archive issue."
+    help = "Set up crontask to automatically run archives."
 
     def add_arguments(self, parser):
         pass

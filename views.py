@@ -1,5 +1,3 @@
-import datetime
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
@@ -34,7 +32,7 @@ def index(request):
     admin_form = forms.ArchiveAdminForm(initial={'journal_archive_enabled': journal_archive_enabled, 
                                                 'article_archive_enabled': article_archive_enabled,
                                                 'edit_article_enabled': edit_article_enabled,
-                                                'request_template': request_template})
+                                                'request_email_template': request_template})
 
     if request.POST:
         admin_form = forms.ArchiveAdminForm(request.POST)
