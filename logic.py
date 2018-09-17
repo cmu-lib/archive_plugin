@@ -21,6 +21,7 @@ def copy_article_for_update(article_id):
     # Reset date information
     article.date_started = datetime.now()
     article.date_accepted = None
+    article.date_published = None
     article.date_declined = None
     article.date_submitted = None
     article.date_updated = None

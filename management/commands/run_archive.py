@@ -15,7 +15,6 @@ class Command(BaseCommand):
         #init cron, get virtualenv information
         cron = CronTab(user=True)
         virtualenv = os.environ.get('VIRTUAL_ENV', None)
-        archive_path = os.path.dirname(os.path.realpath(__file__))
 
         #add new cron job
         job = cron.new(command="{}/bin/python3 {}/manage.py create_archive".format(virtualenv, settings.BASE_DIR))

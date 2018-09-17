@@ -50,7 +50,7 @@ def install():
     # set starting message template for each journal
     for journal in Journal.objects.all():
         setting_handler.save_plugin_setting(new_plugin, 'request_email_template', message_text, journal)
-        # TODO: set default archive interval (quarterly)
+        # TODO: make archive interval a setting
 
 
 def hook_registry():

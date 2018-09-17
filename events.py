@@ -10,5 +10,4 @@ def register_update_time(**kwargs):
     if hasattr(article, 'version'):
         v = article.version
         v.revision_date = article.date_published
-        v.is_published = True
         v.save()
