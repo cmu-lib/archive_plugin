@@ -84,11 +84,11 @@ def article_archive(request, article_id):
 
         # prepare and return page
         
-        context = {'base_article': base_article, 'versions': versions}
+        context = {'base_article': base_article, 'orig_article': article, 'versions': versions, 'journal': request.journal}
 
     # if no updates, just return the single entry
     else:
-        context = {'base_article': article, 'versions': [article]}
+        context = {'base_article': article, 'orig_article': article, 'versions': [article], 'journal': request.journal}
 
     template = "archive_plugin/article_version_list.html"
     return render(request, template, context)
