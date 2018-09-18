@@ -14,8 +14,8 @@
             <h3>{{ base_article.title }}: Citation Information and Revision History</h3>
             <br>
             <h4>{% trans "How to Cite" %}</h4>
+            {% if not orig_article.version.is_archived %}<p style="color: red;">* An archive has not yet been run on this version of this entry. We recommend citing a stable, archived version.</p>{% endif %}
             {% include "elements/journal/how_to_cite.html" with article=orig_article journal=journal %}
-            {% if not orig_article.version.is_archived %}<p style="color: red;">This version of the article has not been archived. We recommend citing a stable, archived version.</p>{% endif %}
             <h4>Version History</h4>
             <ul>
                 {% for version in versions %}
