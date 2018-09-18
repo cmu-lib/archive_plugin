@@ -22,9 +22,9 @@ class Command(BaseCommand):
         """
         plugin = models.Plugin.objects.get(name=plugin_settings.SHORT_NAME)
         
-        # get date and convert to string in format 'mm/dd/YYYY'
+        # get date and convert to string in format 'Month Year', e.g. 'September 2018'
         curr_date = timezone.now()
-        pretty_date = curr_date.strftime('%m/%d/%Y')
+        pretty_date = curr_date.strftime('%B') + ' ' + str(curr_date.year)
 
         # go through each journal and run archive if it is enabled
         for journal in Journal.objects.all():
@@ -43,10 +43,23 @@ class Command(BaseCommand):
                 # save initial copy of issue with no articles
                 new_issue = Issue.objects.create(journal=journal, volume=volume, issue=issue, issue_title=title, date=date, issue_type=issue_type, issue_description=issue_description)
 
-                # go through articles for journal, add to issue all that are up-to-date and published
-                for article in Article.objects.filter(journal=journal, stage="Published", updates__isnull=True).order_by("title"):
-                    new_issue.articles.add(article)
-                    if hasattr(article, "version"):
-                        v = article.version
-                        v.is_archived = True
-                        v.save()
+                # go through published articles for journal, add to issue all that are up-to-date
+                for article in Article.objects.filter(journal=journal, stage="Published").order_by("title"):
+                    is_latest = True
+
+                    # see if article has updates, and if so, if any of them are published
+                    if hasattr(article, "updates"):
+                        for update in article.updates.all():
+                            if update.article.stage == "Published":
+                                is_latest = False
+                                break
+
+                    # if article is most up-to-date published version, add it to archive
+                    if is_latest:
+                        new_issue.articles.add(article)
+
+                        # register the version as archived
+                        if hasattr(article, "version"):
+                            v = article.version
+                            v.is_archived = True
+                            v.save()
