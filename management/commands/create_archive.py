@@ -37,11 +37,13 @@ class Command(BaseCommand):
                 title = pretty_date
                 (volume, issue) = Issue.auto_increment_volume_issue(journal)
                 date = curr_date
-                issue_description = "Archive run " + pretty_date
+                issue_description = "Quarterly archive run " + pretty_date
                 issue_type = "Issue"
 
-                # save initial copy of issue with no articles
+                # save initial copy of issue with no articles, register as current issue
                 new_issue = Issue.objects.create(journal=journal, volume=volume, issue=issue, issue_title=title, date=date, issue_type=issue_type, issue_description=issue_description)
+                journal.current_issue = new_issue
+                journal.save()
 
                 # go through published articles for journal, add to issue all that are up-to-date
                 for article in Article.objects.filter(journal=journal, stage="Published").order_by("title"):

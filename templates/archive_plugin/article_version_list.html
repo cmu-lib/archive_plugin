@@ -15,12 +15,12 @@
             <br>
             <h4>{% trans "How to Cite" %}</h4>
             {% include "elements/journal/how_to_cite.html" with article=orig_article journal=journal %}
-            {% if not orig_article.version.is_archived %}<p style="color: red;">This version has not been archived. We recommend citing a stable, archived version of the article.</p>{% endif %}
+            {% if not orig_article.version.is_archived %}<p style="color: red;">This version of the article has not been archived. We recommend citing a stable, archived version.</p>{% endif %}
             <h4>Version History</h4>
             <ul>
                 {% for version in versions %}
-                    <li><a href="{% url 'article_view' version.identifier.id_type version.identifier.identifier %}">{% if version == orig_article %}<b>{% endif %}{{ version.date_published | date:"F d Y" }}{% if version == orig_article %}</b>{% endif %}</a>{% if version.version %}: {{ version.version.update_type }} update{% if not version.version.is_archived %}, <strong>NOT ARCHIVED</strong>{% endif %}
-                        {% else %}: Original entry{% if not article.issues %}, <strong>NOT ARCHIVED</strong>{% endif %}{% endif %}</li>
+                    <li><a href="{% url 'article_view' version.identifier.id_type version.identifier.identifier %}">{% if version == orig_article %}<strong>{% endif %}{{ version.date_published | date:"F d Y" }}{% if version == orig_article %}</strong>{% endif %}</a>{% if version.version %}: {{ version.version.update_type }} update{% if not version.version.is_archived %}, <strong>NOT ARCHIVED</strong>{% endif %}
+                        {% else %}: original entry{% if not article.issues %}, <strong>NOT ARCHIVED</strong>{% endif %}{% endif %}</li>
                 {% endfor %}
             </ul>
         </div>
