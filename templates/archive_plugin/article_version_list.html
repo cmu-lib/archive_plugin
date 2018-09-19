@@ -14,13 +14,13 @@
             <h3>{{ base_article.title }}: Citation Information and Revision History</h3>
             <br>
             <h4>{% trans "How to Cite" %}</h4>
-            {% if not orig_article.version.is_archived %}<p style="color: red;">* An archive has not yet been run on this version of this entry. We recommend citing a stable, archived version.</p>{% endif %}
+            {% if not orig_article.version.is_archived and not orig_article.issues %}<p style="color: red;">* This version of the entry, "{{ base_article.title }}," is not archived. We recommend citing a stable, archived version of the entry (if one is available).</p>{% endif %}
             {% include "elements/journal/how_to_cite.html" with article=orig_article journal=journal %}
             <h4>Version History</h4>
             <ul>
                 {% for version in versions %}
-                    <li><a href="{% url 'article_view' version.identifier.id_type version.identifier.identifier %}">{% if version == orig_article %}<strong>{% endif %}{{ version.date_published | date:"F d Y" }}{% if version == orig_article %}</strong>{% endif %}</a>{% if version.version %}: {{ version.version.update_type }} update{% if not version.version.is_archived %}, <strong>NOT ARCHIVED</strong>{% endif %}
-                        {% else %}: original entry{% if not article.issues %}, <strong>NOT ARCHIVED</strong>{% endif %}{% endif %}</li>
+                    <li><a href="{% url 'article_view' version.identifier.id_type version.identifier.identifier %}">{% if version == orig_article %}<strong>>> {% endif %}{{ version.date_published | date:"F d, Y" }}{% if version == orig_article %}</strong>{% endif %}</a>{% if version.version %}: {{ version.version.update_type }} update{% if not version.version.is_archived %}, <strong>NOT ARCHIVED</strong>{% endif %}
+                        {% else %}: original entry{% if not version.issues %}, <strong>NOT ARCHIVED</strong>{% endif %}{% endif %}</li>
                 {% endfor %}
             </ul>
         </div>
