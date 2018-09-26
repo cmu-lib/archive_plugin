@@ -6,7 +6,7 @@ import os
 from crontab import CronTab
 
 class Command(BaseCommand):
-    help = "Set up crontask to automatically run archives."
+    help = "Set up cron job to automatically run archives."
 
     def add_arguments(self, parser):
         pass
@@ -17,8 +17,7 @@ class Command(BaseCommand):
         virtualenv = os.environ.get('VIRTUAL_ENV', None)
 
         #add new cron job
-        job = cron.new(command="{}/bin/python3 {}/manage.py create_archive".format(virtualenv, settings.BASE_DIR))
-
+        job = cron.new(command="{}/bin/python {}/manage.py create_archive".format(virtualenv, settings.BASE_DIR), comment="Automatic journal archiving")
 
         #set job to run quarterly (every 3 months)
         job.month.every(3)
