@@ -20,4 +20,4 @@ The steps to install this plugin are as follows:
 9. (Optional) To add the plugin's browse functionality for a journal (lists all articles in their most up-to-date, published version), go to manager->content manager, click modify nav, and add a page named Browse with the url `plugins/archive_plugin/browse_entries`, or, if you are using path instead of domain, `journal_code/plugins/archive_plugin/browse_entries`, where 'journal_code' is the code you gave to the journal.
 
 ## Manually running an archive
-If you want to manually run an archive, ssh into your server, navigate to your janeway install src directory, activate your virtual environment, and run `python3 manage.py create_archive`.
+If you want to manually run an archive, ssh into your server, navigate to your janeway install src directory, activate your virtual environment, and run `python3 manage.py create_archive`. Alternatively, you can just use janeway's built in issue system and select all articles you wish to include.
