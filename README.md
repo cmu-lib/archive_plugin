@@ -14,3 +14,4 @@ The steps to install this plugin are as follows:
 6. Set up automatic journal archiving if desired: `python3 manage.py run_archive`
 7. Restart apache
 8. Open your instance of janeway, and for all journals for which you wish to use this plugin, go to manager->plugins, select this plugin, and toggle features.
+9. (Optional) To add the plugin's browse functionality for a journal (lists all articles in their most up-to-date, published version), go to manager->content manager, click modify nav, and add a page named Browse with the url `plugins/archive_plugin/browse_entries`, or, if you are using path instead of domain, `journal_code/plugins/archive_plugin/browse_entries`, where 'journal_code' is the code you gave to the journal.
