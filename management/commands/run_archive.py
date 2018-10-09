@@ -20,6 +20,6 @@ class Command(BaseCommand):
         job = cron.new(command="{}/bin/python {}/manage.py create_archive".format(virtualenv, settings.BASE_DIR), comment="Automatic journal archiving")
 
         #set job to run quarterly (every 3 months)
-        job.month.every(3)
-
+        job.setall('0 0 1 */3 *')
+        
         cron.write()
