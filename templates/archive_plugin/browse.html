@@ -3,24 +3,86 @@
 {% load hooks %}
 {% load i18n %}
 
-
-{% block title %}Browse{% endblock %}
+{% block title %}Table of Contents{% endblock %}
 
 {% block css %}
 {% endblock %}
 
 {% block body %}
-    <section id="content">
-        <div class="row">
-            <div class="large-8 columns border-right">
-                <h3>Browse Entries</h3>
-                {% hook 'journal_archive_list' %}
-                {% for article in articles %}
-                    {% include "elements/journal/box_article.html" with article=article %}
-                {% empty %}
-                    <h3>There are no articles published in this journal yet.</h3>
-                {% endfor %}
-            </div>
+<section id="content">
+  <div class="grid-x grid-margin-x">
+    <div class="cell large-9">
+      <h2 class="cmp-page__title">
+        {% trans "Table of Contents" %}
+      </h2>
+      <div class="cmp-toc">
+        <div class="cmp-toc__group">
+          <h3 class="cmp-toc__title">A</h3>
+          <ul class="cmp-toc__list">
+            <li class="cmp-toc__item">
+              <a class="cmp-toc__link" href="#">A Title &#x2022; Author Name</a>
+            </li>
+            <li class="cmp-toc__item">
+              <a class="cmp-toc__link" href="#">A Very Long Title That Will Just Keep On Growing Adipiscing interdum penatibus fusce facilisis arcu etiam nullam auctor tortor augue blandit nam vulputate amet orci
+              dignissim dolor class ornare feugiat magna mi nunc phasellus eros faucibus tincidunt aliquet elit &#x2022; Author Name</a>
+            </li>
+            <li class="cmp-toc__item">
+              <a class="cmp-toc__link" href="#">A Title &#x2022; Author Name</a>
+            </li>
+            <li class="cmp-toc__item">
+              <a class="cmp-toc__link" href="#">A Title &#x2022; Author Name</a>
+            </li>
+            <li class="cmp-toc__item">
+              <a class="cmp-toc__link" href="#">A Title &#x2022; Author Name</a>
+            </li>
+            <li class="cmp-toc__item">
+              <a class="cmp-toc__link" href="#">A Title &#x2022; Author Name</a>
+            </li>
+          </ul>
         </div>
-    </section>
+        <div class="cmp-toc__group">
+          <h3 class="cmp-toc__title">B</h3>
+          <ul>
+            <li class="cmp-toc__item">
+              <a class="cmp-toc__link" href="#">B Title &#x2022; Author Name</a>
+            </li>
+            <li class="cmp-toc__item">
+              <a class="cmp-toc__link" href="#">B Title &#x2022; Author Name</a>
+            </li>
+            <li class="cmp-toc__item">
+              <a class="cmp-toc__link" href="#">B Title &#x2022; Author Name</a>
+            </li>
+            <li class="cmp-toc__item">
+              <a class="cmp-toc__link" href="#">B Title &#x2022; Author Name</a>
+            </li>
+            <li class="cmp-toc__item">
+              <a class="cmp-toc__link" href="#">B Title &#x2022; Author Name</a>
+            </li>
+            <li class="cmp-toc__item">
+              <a class="cmp-toc__link" href="#">B Title &#x2022; Author Name</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <aside class="cell large-3">
+      <ul class="cmp-secondary-nav__list">
+        <li class="cmp-secondary-nav__item">
+          <a class="cmp-secondary-nav__link" href="#">Encyclopedia Archives</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+{% comment %}
+  old code from this template.
+  {% hook 'journal_archive_list' %}
+  {% for article in articles %}
+  {% include "elements/journal/box_article.html" with article=article %}
+  {% empty %}
+  <h3>There are no articles published in this journal yet.</h3>
+  {% endfor %}
+{% endcomment %}
+
 {% endblock %}
