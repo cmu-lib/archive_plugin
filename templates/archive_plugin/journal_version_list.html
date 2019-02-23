@@ -9,6 +9,33 @@
 {% endblock %}
 
 {% block body %}
+<section id="content">
+  <div class="grid grid-margin-x">
+    <div class="cell medium-9">
+      <h2 class="cmp-page__title">{% trans 'Encyclopedia Archives' %}</h2>
+      {% if journal_versions %}
+      <p>
+        The Carnegie Mellon Encyclopedia of Science History is archived quarterly.<br />
+        To access a previous version of the encyclopedia, <strong>click a link below</strong>.
+      </p>
+      <ul class="cmp-issues__list u-bullet">
+        {% for journal_version in journal_versions %}
+        <li class="cmp-issues__item">
+          <a class="cmp-issues__link" href="{% url 'journal_issue' journal_version.id %}">{{ journal_version.date.year }}</a>
+        </li>
+        {% empty %}
+        <p>{% trans "There are no archives for this encyclopedia yet." %}</p>
+        {% endfor %}
+      </ul>
+      <p><strong>* No changes since previous archive</strong></p>
+      {% else %}
+      <p>{% trans "There are no archives for this encyclopedia yet." %}</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% comment %}
 <section id="content" class="no-padding">
     <div class="row">
     {% for journal_version in journal_versions %}
@@ -27,4 +54,5 @@
     {% endfor %}
     </div>
 </section>
+{% endcomment %}
 {% endblock %}
