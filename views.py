@@ -168,7 +168,7 @@ def search(request):
     :param request: HttpRequest object
     :return: HttpResponse object
     """
-    articles = []
+    article_list = []
     search_term = None
     keyword = None
     if request.POST and 'clear' in request.POST:
