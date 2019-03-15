@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
+from django.utils import timezone
 from django.db.models import Q
 
 from plugins.archive_plugin import forms, plugin_settings, logic, transactional_emails
@@ -12,6 +13,7 @@ from security.decorators import editor_user_required, author_user_required
 
 from submission.models import Article
 from journal.models import Issue
+from submission import models as submission_models
 
 @editor_user_required
 def index(request):
@@ -147,22 +149,93 @@ def browse_entries(request):
     """
     Custom view for browsing all current entries in the encyclopedia
     """
-    # get all articles from journal that are published and the most recent copies
-    # final_articles =  Article.objects.filter(journal=request.journal, stage="Published", updates__isnull=True).order_by("title")
 
     final_articles = []
-
-    for article in Article.objects.filter(journal=request.journal, stage="Published").order_by("title"):
-        is_latest = True
-        if hasattr(article, "updates"):
-            for update in article.updates.all():
-                if update.article.stage == "Published":
-                    is_latest = False
-        if is_latest:
-            final_articles.append(article)
+    # get all articles from journal that are published and the most recent copies (handled in logic)
+    article_list = Article.objects.filter(journal=request.journal, stage="Published").order_by("title")
+    
+    final_articles = logic.is_latest(article_list)
 
     # set up context and render response
     context = {"articles": final_articles}
     template = "archive_plugin/browse.html"
+
+    return render(request, template, context)
+
+def search(request):
+    """
+    Allows a user to search for articles by name or author name.
+    :param request: HttpRequest object
+    :return: HttpResponse object
+    """
+    articles = []
+    search_term = None
+    keyword = None
+    if request.POST and 'clear' in request.POST:
+        return logic.unset_search_session_variables(request)
+
+    search_term, keyword, sort, search_filters, redir = logic.handle_search_controls(request)
+
+    if redir:
+        return redir
+
+    # atm search term trumps keyword in if/elif
+    if search_term:
+        article_search = submission_models.Article.objects.filter(
+            (Q(title__icontains=search_term) |
+             Q(keywords__word__icontains=search_term) |
+             Q(subtitle__icontains=search_term)), 
+            journal=request.journal, 
+            stage=submission_models.STAGE_PUBLISHED,
+            date_published__lte=timezone.now()
+        ).order_by(sort)
+
+        article_search = [article for article in article_search]
+
+        from_author = submission_models.FrozenAuthor.objects.filter(
+            (Q(first_name__icontains=search_term) |
+             Q(last_name__icontains=search_term)),
+            article__journal=request.journal, 
+            article__stage=submission_models.STAGE_PUBLISHED, 
+            article__date_published__lte=timezone.now()
+        )
+
+        articles_from_author = [author.article for author in from_author]
+        article_list = set(article_search + articles_from_author)
+
+    # just single keyword atm. but search of all keywords included in article_search.
+    elif keyword:
+        keyword_search = submission_models.Article.objects.filter(
+            keywords__word=keyword, 
+            journal=request.journal, 
+            stage=submission_models.STAGE_PUBLISHED, 
+            date_published__lte=timezone.now()
+        ).order_by(sort)
+        article_list = [article for article in keyword_search]
+
+    # all keywords of published articles.
+    published_articles = submission_models.Article.objects.filter(
+        journal=request.journal,
+        stage=submission_models.STAGE_PUBLISHED
+        )
+    # based on published articles, return potential keywords
+    all_keywords = submission_models.Keyword.objects.filter(
+        pk__in=
+            published_articles.values_list('keywords__pk',flat=True)        
+    )
+
+    final_articles = []    
+    final_articles = logic.is_latest(article_list)
+
+    template = 'archive_plugin/search.html'
+
+    context = {
+        'articles': final_articles,
+        'search_term': search_term,
+        'keyword': keyword,
+        'all_keywords': all_keywords,
+        'sort':sort,
+        'search_filters':search_filters,
+    }
 
     return render(request, template, context)
