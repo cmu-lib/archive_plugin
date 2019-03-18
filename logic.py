@@ -51,25 +51,25 @@ def handle_search_controls(request):
     if request.POST:
         search_term = request.POST.get('article_search', False)
         keyword = request.POST.get('keyword', False)
-        ordering = request.POST.get('ordering', False)
+        sort = request.POST.get('sort', False)
             
-        return search_term, keyword, ordering, set_search_GET_variables(request, search_term, keyword, ordering)
+        return search_term, keyword, sort, set_search_GET_variables(request, search_term, keyword, sort)
 
     else:
         search_term = request.GET.get('article_search', False)
         keyword = request.GET.get('keyword', False)
-        ordering = request.GET.get('ordering', False)
+        sort = request.GET.get('sort', False)
         
                 
-        return search_term, keyword, ordering, None
+        return search_term, keyword, sort, None
 
-def set_search_GET_variables(request, search_term, keyword, ordering):
+def set_search_GET_variables(request, search_term, keyword, sort):
     if search_term:
         redir_str = '{0}?article_search={1}'.format(reverse('archive_search'), search_term)
     elif keyword:
         redir_str = '{0}?keyword={1}'.format(reverse('archive_search'), keyword)
-    if ordering:
-        redir_str += '&ordering={0}'.format(ordering)
+    if sort:
+        redir_str += '&sort={0}'.format(sort)
 
     return redirect(redir_str)
 

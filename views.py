@@ -176,14 +176,14 @@ def search(request):
     if request.POST and 'clear' in request.POST:
         return logic.unset_search_GET_variables(request)
 
-    search_term, keyword, ordering, redir = logic.handle_search_controls(request)
+    search_term, keyword, sort, redir = logic.handle_search_controls(request)
 
     if redir:
         return redir
 
     #if no order, set order to title (alphabetical). this happens when receiveing a GET request for keyword.
-    if request.GET and not ordering:
-        ordering='title'
+    if request.GET and not sort:
+        sort='title'
 
     if search_term:
         # return two lists of pks based on search term.
@@ -209,7 +209,7 @@ def search(request):
         # merge the two lists into a set which will clear out duplicates
         article_list_unsorted = set(article_search_unsorted + articles_from_author_unsorted)
         # do a search on the set of pks and apply the order_by while turning back into a list of article objects.
-        article_list = list(submission_models.Article.objects.filter(pk__in=article_list_unsorted).order_by(ordering))
+        article_list = list(submission_models.Article.objects.filter(pk__in=article_list_unsorted).order_by(sort))
 
     # just single keyword atm. but search of all keywords included in article_search.
     elif keyword:
@@ -218,7 +218,7 @@ def search(request):
             journal=request.journal, 
             stage=submission_models.STAGE_PUBLISHED, 
             date_published__lte=timezone.now()
-        ).order_by(ordering)
+        ).order_by(sort)
         article_list = [article for article in keyword_search]
 
     # all keywords of published articles.
@@ -243,7 +243,7 @@ def search(request):
         'articles': final_articles,
         'search_term': search_term,
         'keyword': keyword,
-        'ordering': ordering,
+        'sort': sort,
         'all_keywords': all_keywords,        
     }
 
