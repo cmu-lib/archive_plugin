@@ -19,7 +19,7 @@
             <h4>Version History</h4>
             <ul>
                 {% for version in versions %}
-                    <li><a href="{% url 'article_view' version.identifier.id_type version.identifier.identifier %}">{% if version == orig_article %}<strong>>> {% endif %}{{ version.date_published | date:"F d, Y" }}{% if version == orig_article %}</strong>{% endif %}</a>{% if version.version %}: {{ version.version.update_type }} update{% if not version.version.is_archived %}, <strong>NOT ARCHIVED</strong>{% endif %}
+                    <li><a href="{% url 'article_view' version.identifier.id_type version.identifier.identifier %}">{% if version == orig_article %}<strong>>> {% endif %}{{ version.date_published | date:"F d, Y" }}{% if version == orig_article %}</strong>{% endif %}</a>{% if version.version %}: <span data-tooltip aria-haspopup="true" class="has-tip" title="{{ version.version.update_type_info }}">{{ version.version.update_type }} update</span>{% if not version.version.is_archived %}, <strong>NOT ARCHIVED</strong>{% endif %}
                         {% else %}: original entry{% if not version.issues.exists %}, <strong>NOT ARCHIVED</strong>{% endif %}{% endif %}</li>
                 {% endfor %}
             </ul>
