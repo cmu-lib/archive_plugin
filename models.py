@@ -10,6 +10,11 @@ UPDATE_CHOICES = [
     (UPDATE_TYPE_MAJOR, 'Major')
 ]
 
+UPDATE_INFO = {
+    UPDATE_TYPE_MINOR: 'Correction of a typographical error',
+    UPDATE_TYPE_MAJOR: 'Substantive content change, including new bibliographic entries'
+}
+
 
 class Version(models.Model):
     article = models.OneToOneField(Article, null=True, on_delete=models.SET_NULL)
@@ -21,3 +26,7 @@ class Version(models.Model):
     is_archived = models.BooleanField(default=False)
 
     # can tell if version is published by accessing version's article.stage attribute
+
+    @property
+    def update_type_info(self):
+        return UPDATE_INFO[self.update_type]
