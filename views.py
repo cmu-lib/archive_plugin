@@ -171,16 +171,22 @@ def search(request):
     article_list = []
     search_term = None
     keyword = None
-    if request.POST and 'clear' in request.POST:
-        return logic.unset_search_session_variables(request)
 
-    search_term, keyword, sort, search_filters, redir = logic.handle_search_controls(request)
+    
+    if request.POST and 'clear' in request.POST:
+        return logic.unset_search_GET_variables(request)
+
+    search_term, keyword, ordering, redir = logic.handle_search_controls(request)
 
     if redir:
         return redir
 
-    # atm search term trumps keyword in if/elif
+    #if no order, set order to title (alphabetical). this happens when receiveing a GET request for keyword.
+    if request.GET and not ordering:
+        ordering='title'
+
     if search_term:
+        # return two lists of pks based on search term.
         article_search = submission_models.Article.objects.filter(
             (Q(title__icontains=search_term) |
              Q(keywords__word__icontains=search_term) |
@@ -188,9 +194,9 @@ def search(request):
             journal=request.journal, 
             stage=submission_models.STAGE_PUBLISHED,
             date_published__lte=timezone.now()
-        ).order_by(sort)
+        )
 
-        article_search = [article for article in article_search]
+        article_search_unsorted = [article.pk for article in article_search]
 
         from_author = submission_models.FrozenAuthor.objects.filter(
             (Q(first_name__icontains=search_term) |
@@ -199,9 +205,11 @@ def search(request):
             article__stage=submission_models.STAGE_PUBLISHED, 
             article__date_published__lte=timezone.now()
         )
-
-        articles_from_author = [author.article for author in from_author]
-        article_list = set(article_search + articles_from_author)
+        articles_from_author_unsorted = [author.article.pk for author in from_author]
+        # merge the two lists into a set which will clear out duplicates
+        article_list_unsorted = set(article_search_unsorted + articles_from_author_unsorted)
+        # do a search on the set of pks and apply the order_by while turning back into a list of article objects.
+        article_list = list(submission_models.Article.objects.filter(pk__in=article_list_unsorted).order_by(ordering))
 
     # just single keyword atm. but search of all keywords included in article_search.
     elif keyword:
@@ -210,7 +218,7 @@ def search(request):
             journal=request.journal, 
             stage=submission_models.STAGE_PUBLISHED, 
             date_published__lte=timezone.now()
-        ).order_by(sort)
+        ).order_by(ordering)
         article_list = [article for article in keyword_search]
 
     # all keywords of published articles.
@@ -224,6 +232,8 @@ def search(request):
             published_articles.values_list('keywords__pk',flat=True)        
     )
 
+    # this is the only piece of logic that is really necessary for the archive_plugin to be involved in search.
+    # the rest of the logic above and in the logic.py file should be in core and this should be merged.
     final_articles = []    
     final_articles = logic.is_latest(article_list)
 
@@ -233,9 +243,8 @@ def search(request):
         'articles': final_articles,
         'search_term': search_term,
         'keyword': keyword,
-        'all_keywords': all_keywords,
-        'sort':sort,
-        'search_filters':search_filters,
+        'ordering': ordering,
+        'all_keywords': all_keywords,        
     }
 
     return render(request, template, context)

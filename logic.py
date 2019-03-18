@@ -49,43 +49,31 @@ def get_base_article(article_id=None):
 
 def handle_search_controls(request):
     if request.POST:
-        
-        # being set by get-- still need to grab these in case of post for filtering option.
         search_term = request.POST.get('article_search', False)
         keyword = request.POST.get('keyword', False)
-
-        if not keyword and not search_term:    
-            search_term = request.GET.get('article_search', False)
-            keyword = request.GET.get('keyword', False)
-
-        sort = request.POST.get('sort', '-date_published')
-        if sort:
-            search_filters=True
+        ordering = request.POST.get('ordering', False)
             
-        return search_term, keyword, sort, search_filters, set_search_session_variables(request, search_term, keyword, sort, search_filters)
+        return search_term, keyword, ordering, set_search_GET_variables(request, search_term, keyword, ordering)
 
     else:
         search_term = request.GET.get('article_search', False)
         keyword = request.GET.get('keyword', False)
-        sort = request.session.get('search_sort','-date_published')
-        search_filters = request.session.get('search_filters', False)
+        ordering = request.GET.get('ordering', False)
+        
                 
-        return search_term, keyword, sort, search_filters, None
+        return search_term, keyword, ordering, None
 
-def set_search_session_variables(request, search_term, keyword, sort, search_filters):
+def set_search_GET_variables(request, search_term, keyword, ordering):
     if search_term:
         redir_str = '{0}?article_search={1}'.format(reverse('archive_search'), search_term)
     elif keyword:
         redir_str = '{0}?keyword={1}'.format(reverse('archive_search'), keyword)
-
-    request.session['search_sort'] = sort
-    request.session['search_filters'] = search_filters
+    if ordering:
+        redir_str += '&ordering={0}'.format(ordering)
 
     return redirect(redir_str)
 
-def unset_search_session_variables(request):
-    del request.session['search_sort']
-    del request.session['search_filters']
+def unset_search_GET_variables(request):
 
     return redirect('{0}'.format(reverse('archive_search')))
 
