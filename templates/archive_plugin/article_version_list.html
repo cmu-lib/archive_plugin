@@ -17,7 +17,7 @@
             {% if not orig_article.issues.exists %}<p style="color: red;">* This version of the entry, "{{ base_article.title }}," is not archived. We recommend citing a stable, archived version of the entry (if one is available).</p>{% endif %}
             {% include "elements/journal/how_to_cite.html" with article=orig_article journal=journal %}
             <h4>Version History</h4>
-            <table>
+            <table class="article-archive-table">
                 <tr>
                     <th>Publication Date</th>
                     <th>Version Type</th>
