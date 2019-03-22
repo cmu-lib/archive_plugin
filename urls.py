@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^article/(?P<article_id>\d+)/update/$', views.update_article, name='update_article'),
     url(r'^article/(?P<article_id>\d+)/request_update/$', views.request_update, name='request_update'),
     url(r'^browse_entries/$', views.browse_entries, name='browse_entries'),
+    url(r'^create_archive/$', views.create_archive, name='create_archive'),
 ]
