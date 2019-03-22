@@ -21,11 +21,35 @@ def inject_edit_article(context):
         request=request
     )
 
+def inject_article_archive_warning(context):
+    """
+    Injects a warning that an article has a more recent published version available.
+    """
+
+    request = context.get('request')
+    plugin = models.Plugin.objects.get(name=plugin_settings.SHORT_NAME)
+
+    article_archive_enabled = setting_handler.get_plugin_setting(plugin, 'article_archive_enabled', request.journal)
+
+    if not article_archive_enabled.value:
+        return ''
+
+    article = context.get('article')
+
+    # If the article has never been updated, return nothing
+    if not article.updates.exists():
+        return ''
+
+    return render_to_string(
+        'archive_plugin/inject_article_archive_warning.html',
+        context={'article': context.get('article')},
+        request=request
+    )
 
 def inject_article_archive(context):
     """
     Injects a link for the user to browse previous version of an article
-    """ 
+    """
     request = context.get('request')
     plugin = models.Plugin.objects.get(name=plugin_settings.SHORT_NAME)
 
