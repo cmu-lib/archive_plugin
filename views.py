@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
 from django.db.models import Q
+from django.core.management import call_command
 
 from plugins.archive_plugin import forms, plugin_settings, logic, transactional_emails
 from plugins.archive_plugin.models import Version
@@ -149,9 +150,13 @@ def create_archive(request):
     Creates a new journal archive containing the most up-to-date articles via the management command.
     """
 
-    messages.add_message(request, messages.SUCCESS, "New journal archive created")
-
-    return redirect(reverse('manage_issues'))
+    try:
+        call_command('create_archive')
+    except:
+        messages.add_message(request, messages.ERROR, "Archive creation failed. Contact your system administrator.")
+    else:
+        messages.add_message(request, messages.SUCCESS, "New journal archive created")
+        return redirect(reverse('manage_issues'))
 
 
 def browse_entries(request):
