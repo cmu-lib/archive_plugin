@@ -14,6 +14,11 @@
                         {{ admin_form|foundation }}
                         <button class="button success" type="submit">Save Settings</button>
                     </form>
+                    <form method="POST" action="{%url 'create_archive' %}">
+                        {% csrf_token %}
+                        <button class="button" title="Create a new archvie containing all the most recently published versions of articles."  aria-haspopup="true" data-fade-out-duration="1000" aria-describedby="pyltep-tooltip" data-yeti-box="pyltep-tooltip" data-toggle="pyltep-tooltip" data-resize="pyltep-tooltip" data-events="resize" type="submit">Create a new journal archive</button>
+                    </form>                    
+                    
                 </div>
             </div>
         </div>
