@@ -154,6 +154,7 @@ def create_archive(request):
         call_command('create_archive')
     except:
         messages.add_message(request, messages.ERROR, "Archive creation failed. Contact your system administrator.")
+        return redirect(reverse('archive_index'))
     else:
         messages.add_message(request, messages.SUCCESS, "New journal archive created")
         return redirect(reverse('manage_issues'))
