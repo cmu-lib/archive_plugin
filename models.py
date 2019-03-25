@@ -23,7 +23,6 @@ class Version(models.Model):
     update_type = models.CharField(max_length=20, choices=UPDATE_CHOICES)
     new_author = models.BooleanField(default=False) # need to track this
     revision_date = models.DateTimeField(blank=True, null=True)
-    is_archived = models.BooleanField(default=False)
 
     # can tell if version is published by accessing version's article.stage attribute
 
