@@ -39,9 +39,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if not version.version.is_archived %}
-                            No
-                        {% elif not version.issues.exists %}
+                        {% if not version.issues.exists %}
                             No
                         {% else %}
                             Yes ({% for issue in version.issues.all %}<a href="{% url 'journal_issue' issue.pk %}">{{ issue.issue_title }}</a>{% if not forloop.last %}; {% endif %}{% endfor %})
