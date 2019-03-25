@@ -1,7 +1,8 @@
 from datetime import datetime
+import copy
 from django.shortcuts import get_object_or_404
 
-from submission.models import Article
+from submission.models import Article, ArticleAuthorOrder
 
 from plugins.archive_plugin.models import Version
 
@@ -12,9 +13,11 @@ def copy_article_for_update(article_id):
     Reset applicable fields so it is recognized as new, unaccepted article for review.
     Return copy of article
     """
-    
-    # Make an exact copy of article
-    article = Article.objects.get(pk=article_id)
+
+    # Make an exact copy of article, preserving the original article instance
+    # for further queries
+    original_article = Article.objects.get(pk=article_id)
+    article = copy.copy(original_article)
     article.pk = None
     article.save()
 
@@ -25,10 +28,25 @@ def copy_article_for_update(article_id):
     article.date_declined = None
     article.date_submitted = None
     article.date_updated = None
-    
+
     # Reset step and stage information
     article.current_step = 1
     article.stage = "Unsubmitted"
+
+    # Assign all original authors
+    original_authors = original_article.authors.all()
+    for a in original_authors:
+        article.authors.add(a)
+
+    # Assign all original author orders
+    original_author_orders = original_article.articleauthororder_set.all()
+    for ao in original_author_orders:
+        ArticleAuthorOrder.objects.create(article = article, author = ao.author, order = ao.order)
+
+    # Assign all original keywords
+    original_keywords = original_article.keywords.all()
+    for k in original_keywords:
+        article.keywords.add(k)
 
     # Save and return copied article
     article.save()
@@ -45,4 +63,3 @@ def get_base_article(article_id=None):
         return get_base_article(article.version.parent_article.pk)
     else:
         return article
-    
