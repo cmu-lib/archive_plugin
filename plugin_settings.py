@@ -59,6 +59,7 @@ def hook_registry():
     """
     return {'journal_archive_list': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_journal_archive'},
             'article_archive_list': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_article_archive'},
+            'article_archive_warning': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_article_archive_warning'},
             'edit_article': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_edit_article'},
             'request_edit': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_request_edit_update'}
             }
