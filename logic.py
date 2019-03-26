@@ -48,6 +48,11 @@ def copy_article_for_update(article_id):
     for k in original_keywords:
         article.keywords.add(k)
 
+    # Null out article images so that it is possible to upload new ones
+    article.large_image_file = None
+    article.thumbnail_image_file = None
+    article.meta_image = None
+
     # Save and return copied article
     article.save()
     return article
