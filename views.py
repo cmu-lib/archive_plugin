@@ -74,22 +74,20 @@ def article_archive(request, article_id):
     article = get_object_or_404(Article, pk=article_id)
 
     # ensure current article is either an update or the parent of another article
-    if hasattr(article, 'version') or hasattr(article, 'updates'):
-        if hasattr(article, 'version'):
-            base_article = article.version.base_article
-        else:
-            base_article = article
 
-        # get queryset of all articles with same base_article (including original base article)
-        versions = Article.objects.filter(Q(version__base_article=base_article) | Q(pk=base_article.pk)).filter(stage='Published').order_by('-date_published')
-
-        # prepare and return page
-
-        context = {'base_article': base_article, 'orig_article': article, 'versions': versions, 'journal': request.journal}
-
-    # if no updates, just return the single entry
+    if hasattr(article, 'version'):
+        base_article = article.version.base_article
     else:
-        context = {'base_article': article, 'orig_article': article, 'versions': [article], 'journal': request.journal}
+        base_article = article
+
+    # get queryset of all articles with same base_article (including original base article)
+    versions = Article.objects.filter(Q(version__base_article=base_article) | Q(pk=base_article.pk)).filter(stage='Published').order_by('-date_published').all()
+
+    archived_versions = versions.filter(issues__archive__isnull=False).all()
+
+    # prepare and return page
+
+    context = {'base_article': base_article, 'orig_article': article, 'versions': versions, 'archived_versions': archived_versions, 'journal': request.journal}
 
     template = "archive_plugin/article_version_list.html"
     return render(request, template, context)

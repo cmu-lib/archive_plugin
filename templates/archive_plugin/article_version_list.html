@@ -14,7 +14,7 @@
             <h3>"{{ base_article.title }}": Citation Information and Article Archives</h3>
             <br>
             <h4>{% trans "How to Cite" %}</h4>
-            {% if not orig_article.issues.exists %}<p style="color: red;">* This version of the entry, "{{ base_article.title }}," is not archived. We recommend citing a stable, archived version of the entry (if one is available).</p>{% endif %}
+            {% if not orig_article in archived_versions %}<p style="color: red;">* This version of the entry, "{{ base_article.title }}," is not archived. We recommend citing a stable, archived version of the entry (if one is available).</p>{% endif %}
             {% include "elements/journal/how_to_cite.html" with article=orig_article journal=journal %}
             <h4>Version History</h4>
             <table class="article-archive-table">
@@ -39,10 +39,10 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if not version.issues.exists %}
-                            No
+                        {% if version in archived_versions %}
+                            Yes ({% for issue in version.issues.all %}{% if issue.archive %}{% if not forloop.first %}; {% endif %}<a href="{% url 'journal_issue' issue.pk %}">{{ issue.issue_title }}</a>{% endif %}{% endfor %})
                         {% else %}
-                            Yes ({% for issue in version.issues.all %}<a href="{% url 'journal_issue' issue.pk %}">{{ issue.issue_title }}</a>{% if not forloop.last %}; {% endif %}{% endfor %})
+                            No
                         {% endif %}
                     </td>
                 </tr>
