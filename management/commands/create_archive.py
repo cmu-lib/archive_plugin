@@ -7,7 +7,7 @@ from journal.models import Issue, Journal
 from utils import setting_handler, models
 
 from plugins.archive_plugin import plugin_settings
-from plugins.archive_plugin.models import Version
+from plugins.archive_plugin.models import Version, Archive
 
 class Command(BaseCommand):
     help = "Run archive issue archive."
@@ -42,6 +42,10 @@ class Command(BaseCommand):
 
                 # save initial copy of issue with no articles, register as current issue
                 new_issue = Issue.objects.create(journal=journal, volume=volume, issue=issue, issue_title=title, date=date, issue_type=issue_type, issue_description=issue_description)
+
+                # Create an Archive instance for the issue
+                Archive.objects.create(issue=new_issue)
+
                 journal.current_issue = new_issue
                 journal.save()
 
