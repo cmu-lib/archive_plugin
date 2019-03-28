@@ -15,7 +15,7 @@
             <br>
             <h4>{% trans "How to Cite" %}</h4>
             {% if not orig_article.issues.exists %}<p style="color: red;">* This version of the entry, "{{ base_article.title }}," is not archived. We recommend citing a stable, archived version of the entry (if one is available).</p>{% endif %}
-            {% include "elements/journal/how_to_cite.html" with article=orig_article journal=journal %}
+            {% include "elements/journal/how_to_cite.html" with article=orig_article %}
             <h4>Version History</h4>
             <table class="article-archive-table">
                 <tr>
