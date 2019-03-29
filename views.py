@@ -55,10 +55,9 @@ def index(request):
 
 def journal_archive(request):
     """
-    Display list of overall journal archives
+    Display list of journal issues that are "archives"
     """
-    # can I just do this with the 'journal_issues' url?
-    journal_versions = Issue.objects.filter(journal=request.journal).order_by('-date')
+    journal_versions = Issue.objects.filter(journal=request.journal, archive__isnull=False).order_by('-date')
     context = {'journal_versions': journal_versions}
     template = "archive_plugin/journal_version_list.html"
 
