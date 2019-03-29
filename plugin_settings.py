@@ -61,5 +61,6 @@ def hook_registry():
             'article_archive_list': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_article_archive'},
             'article_archive_warning': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_article_archive_warning'},
             'edit_article': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_edit_article'},
-            'request_edit': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_request_edit_update'}
+            'request_edit': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_request_edit_update'},
+            'filter_search': {'module': 'plugins.archive_plugin.hooks', 'function': 'reconfigure_archive_search'}
             }
