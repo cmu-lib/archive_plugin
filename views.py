@@ -113,7 +113,6 @@ def update_article(request, article_id):
     Registers a new article as an update of the original article
     : article_id is the pk of the article the user is currently submitting
     : base_article is the pk of the original article this is updating
-    The relationship between multiple articles is traced via publication dates
     """
     if request.POST: # a gift for Andy
         update_type = request.POST.get('update_type')
