@@ -11,7 +11,7 @@ from utils import setting_handler, models
 from utils.notify_helpers import send_email_with_body_from_user
 from security.decorators import editor_user_required, author_user_required
 
-from submission.models import Article
+from submission.models import Article, STAGE_PUBLISHED
 from journal.models import Issue
 
 @editor_user_required
@@ -81,7 +81,7 @@ def article_archive(request, article_id):
         base_article = article
 
     # get queryset of all articles with same base_article (including original base article)
-    versions = Article.objects.filter(Q(version__base_article=base_article) | Q(pk=base_article.pk)).filter(stage='Published').order_by('-date_published').all()
+    versions = Article.objects.filter(Q(version__base_article=base_article) | Q(pk=base_article.pk)).filter(stage=STAGE_PUBLISHED).order_by('-date_published').all()
 
     archived_versions = versions.filter(issues__archive__isnull=False).all()
 
@@ -163,7 +163,7 @@ def browse_entries(request):
     """
     # get all articles from journal that are published and have no updates
 
-    final_articles = Article.objects.filter(journal=request.journal, stage="Published", updates__isnull=True).order_by("title")
+    final_articles = Article.objects.filter(journal=request.journal, stage=STAGE_PUBLISHED, updates__isnull=True).order_by("title")
 
     # set up context and render response
     context = {"articles": final_articles}

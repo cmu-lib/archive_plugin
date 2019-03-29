@@ -1,6 +1,6 @@
 
 from django.db import models
-from submission.models import Article
+from submission.models import Article, STAGE_PUBLISHED
 from journal.models import Issue
 
 UPDATE_TYPE_MINOR = "minor"
@@ -28,7 +28,7 @@ class Version(models.Model):
         """
         Has this version reached the "Published" stage?"
         """
-        return self.article.stage == "Published"
+        return self.article.stage == STAGE_PUBLISHED
 
     @property
     def update_type_info(self):
