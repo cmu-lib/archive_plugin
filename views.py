@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.urls import reverse
 from django.utils import timezone
 from django.db.models import Q
+from django.core.management import call_command
 
 from plugins.archive_plugin import forms, plugin_settings, logic, transactional_emails
 from plugins.archive_plugin.models import Version
@@ -21,7 +22,7 @@ def index(request):
     Creates the admin page for turning the plugin's elements on or off
     """
     plugin = models.Plugin.objects.get(name=plugin_settings.SHORT_NAME)
-    
+
     journal_archive_enabled = setting_handler.get_plugin_setting(plugin, 'journal_archive_enabled', request.journal, create=True,
                                                         pretty='Enable Journal Archive Display', types='boolean').processed_value
     article_archive_enabled = setting_handler.get_plugin_setting(plugin, 'article_archive_enabled', request.journal, create=True,
@@ -30,8 +31,8 @@ def index(request):
                                                         pretty='Enable Article Editing and Updating', types='boolean').processed_value
     request_template = setting_handler.get_plugin_setting(plugin, 'request_email_template', request.journal, create=True,
                                                         pretty='Request Email Template', types='rich-text').processed_value
-    
-    admin_form = forms.ArchiveAdminForm(initial={'journal_archive_enabled': journal_archive_enabled, 
+
+    admin_form = forms.ArchiveAdminForm(initial={'journal_archive_enabled': journal_archive_enabled,
                                                 'article_archive_enabled': article_archive_enabled,
                                                 'edit_article_enabled': edit_article_enabled,
                                                 'request_email_template': request_template})
@@ -85,7 +86,7 @@ def article_archive(request, article_id):
         versions = Article.objects.filter(Q(version__base_article=base_article) | Q(pk=base_article.pk)).filter(stage='Published').order_by('-date_published')
 
         # prepare and return page
-        
+
         context = {'base_article': base_article, 'orig_article': article, 'versions': versions, 'journal': request.journal}
 
     # if no updates, just return the single entry
@@ -103,10 +104,10 @@ def update_article_prompt(request, article_id):
     : article_id is the pk of the article
     """
     article = get_object_or_404(Article, pk=article_id)
-    
+
     template = 'archive_plugin/inject_edit_article_selector.html'
     context = {'article': article}
-    
+
     return render(request, template, context)
 
 
@@ -136,13 +137,29 @@ def request_update(request, article_id):
     Processes request from editor to have an entry updated, sends email to registered article owner with update request.
     article_id is pk of the article to be updated
     """
-    
+
     article = get_object_or_404(Article, pk=article_id)
     transactional_emails.send_update_request_email(request, article)
 
     messages.add_message(request, messages.SUCCESS, "Email request sent.")
 
     return redirect(reverse('manage_archive_article', kwargs={'article_id': article.pk}))
+
+
+@editor_user_required
+def create_archive(request):
+    """
+    Creates a new journal archive containing the most up-to-date articles via the management command.
+    """
+
+    try:
+        call_command('create_archive')
+    except:
+        messages.add_message(request, messages.ERROR, "Archive creation failed. Contact your system administrator.")
+        return redirect(reverse('archive_index'))
+    else:
+        messages.add_message(request, messages.SUCCESS, "New journal archive created")
+        return redirect(reverse('manage_issues'))
 
 
 def browse_entries(request):

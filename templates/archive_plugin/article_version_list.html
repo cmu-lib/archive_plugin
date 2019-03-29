@@ -3,7 +3,7 @@
 {% load i18n %}
 
 
-{% block title %}{{ base_article.title | striptags }}: Revision History{% endblock %}
+{% block title %}{{ base_article.title | striptags }}: Article Archives{% endblock %}
 
 {% block css %}
 {% endblock %}
@@ -11,17 +11,45 @@
 {% block body %}
     <section id="content">
         <div class="row">
-            <h3>{{ base_article.title }}: Citation Information and Revision History</h3>
+            <h3>"{{ base_article.title }}": Citation Information and Article Archives</h3>
             <br>
             <h4>{% trans "How to Cite" %}</h4>
             {% if not orig_article.issues.exists %}<p style="color: red;">* This version of the entry, "{{ base_article.title }}," is not archived. We recommend citing a stable, archived version of the entry (if one is available).</p>{% endif %}
-            {% include "elements/journal/how_to_cite.html" with article=orig_article journal=journal %}
+            {% include "elements/journal/how_to_cite.html" with article=orig_article %}
             <h4>Version History</h4>
-            <ul>
+            <table class="article-archive-table">
+                <tr>
+                    <th>Publication Date</th>
+                    <th>Version Type</th>
+                    <th>Archived?</th>
+                </tr>
                 {% for version in versions %}
-                    <li><a href="{% url 'article_view' version.identifier.id_type version.identifier.identifier %}">{% if version == orig_article %}<strong>>> {% endif %}{{ version.date_published | date:"F d, Y" }}{% if version == orig_article %}</strong>{% endif %}</a>{% if version.version %}: {{ version.version.update_type }} update{% if not version.version.is_archived %}, <strong>NOT ARCHIVED</strong>{% endif %}
-                        {% else %}: original entry{% if not version.issues.exists %}, <strong>NOT ARCHIVED</strong>{% endif %}{% endif %}</li>
+                <tr>
+                    <td>
+                        <a href="{% url 'article_view' version.identifier.id_type version.identifier.identifier %}">{{ version.date_published| date:"F d, Y" }}</a>
+                        {% if version == orig_article %}
+                        <strong> (THIS VERSION)</strong>
+                    {% endif %}
+                    </td>
+                    <td>
+                        {% if version.version %}
+                            <span data-tooltip aria-haspopup="true" class="has-tip" title="{{ version.version.update_type_info }}">{{ version.version.update_type }} update</span>
+                        {% else %}
+                            <span data-tooltip aria-haspopup="true" class="has-tip" title="The original version of this article">original</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not version.version.is_archived %}
+                            No
+                        {% elif not version.issues.exists %}
+                            No
+                        {% else %}
+                            Yes ({% for issue in version.issues.all %}<a href="{% url 'journal_issue' issue.pk %}">{{ issue.issue_title }}</a>{% if not forloop.last %}; {% endif %}{% endfor %})
+                        {% endif %}
+                    </td>
+                </tr>
                 {% endfor %}
+            </table>
             </ul>
         </div>
     </section>

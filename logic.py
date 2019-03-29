@@ -1,8 +1,8 @@
 from datetime import datetime
-from django.urls import reverse
-from django.shortcuts import redirect, get_object_or_404
+import copy
+from django.shortcuts import get_object_or_404
 
-from submission.models import Article
+from submission.models import Article, ArticleAuthorOrder
 
 from plugins.archive_plugin.models import Version
 
@@ -13,9 +13,11 @@ def copy_article_for_update(article_id):
     Reset applicable fields so it is recognized as new, unaccepted article for review.
     Return copy of article
     """
-    
-    # Make an exact copy of article
-    article = Article.objects.get(pk=article_id)
+
+    # Make an exact copy of article, preserving the original article instance
+    # for further queries
+    original_article = Article.objects.get(pk=article_id)
+    article = copy.copy(original_article)
     article.pk = None
     article.save()
 
@@ -26,10 +28,30 @@ def copy_article_for_update(article_id):
     article.date_declined = None
     article.date_submitted = None
     article.date_updated = None
-    
+
     # Reset step and stage information
     article.current_step = 1
     article.stage = "Unsubmitted"
+
+    # Assign all original authors
+    original_authors = original_article.authors.all()
+    for a in original_authors:
+        article.authors.add(a)
+
+    # Assign all original author orders
+    original_author_orders = original_article.articleauthororder_set.all()
+    for ao in original_author_orders:
+        ArticleAuthorOrder.objects.create(article = article, author = ao.author, order = ao.order)
+
+    # Assign all original keywords
+    original_keywords = original_article.keywords.all()
+    for k in original_keywords:
+        article.keywords.add(k)
+
+    # Null out article images so that it is possible to upload new ones
+    article.large_image_file = None
+    article.thumbnail_image_file = None
+    article.meta_image = None
 
     # Save and return copied article
     article.save()
@@ -46,45 +68,3 @@ def get_base_article(article_id=None):
         return get_base_article(article.version.parent_article.pk)
     else:
         return article
-
-def handle_search_controls(request):
-    if request.POST:
-        search_term = request.POST.get('article_search', False)
-        keyword = request.POST.get('keyword', False)
-        sort = request.POST.get('sort', False)
-            
-        return search_term, keyword, sort, set_search_GET_variables(request, search_term, keyword, sort)
-
-    else:
-        search_term = request.GET.get('article_search', False)
-        keyword = request.GET.get('keyword', False)
-        sort = request.GET.get('sort', False)
-        
-                
-        return search_term, keyword, sort, None
-
-def set_search_GET_variables(request, search_term, keyword, sort):
-    if search_term:
-        redir_str = '{0}?article_search={1}'.format(reverse('archive_search'), search_term)
-    elif keyword:
-        redir_str = '{0}?keyword={1}'.format(reverse('archive_search'), keyword)
-    if sort:
-        redir_str += '&sort={0}'.format(sort)
-
-    return redirect(redir_str)
-
-def unset_search_GET_variables(request):
-
-    return redirect('{0}'.format(reverse('archive_search')))
-
-def is_latest(article_list):
-    final_articles = []
-    for article in article_list:
-        is_latest = True
-        if hasattr(article, "updates"):
-            for update in article.updates.all():
-                if update.article.stage == "Published":
-                    is_latest = False
-        if is_latest:
-            final_articles.append(article)
-    return final_articles

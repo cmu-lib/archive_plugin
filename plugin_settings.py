@@ -44,7 +44,7 @@ def install():
         <p>Dear {{ article.correspondence_author.full_name }},</p>
         <p>The editorial board of <i>{{ article.journal.name }}</i> requests that the article, '{{ article.title }},' be updated. Please follow the link below to begin the submission process.</p>
         <p><a href="{{ request.journal_base_url }}{% url 'update_type' article.pk %}">Submit your update.</a></p>
-        <p>Best,<br>Editorial Board, <i>{{ article.journal.code }}</i></p>
+        <p>Best,<br>Editorial Board, <i>{{ article.journal.name }}</i></p>
     """
 
     # set starting message template for each journal
@@ -59,6 +59,7 @@ def hook_registry():
     """
     return {'journal_archive_list': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_journal_archive'},
             'article_archive_list': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_article_archive'},
+            'article_archive_warning': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_article_archive_warning'},
             'edit_article': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_edit_article'},
             'request_edit': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_request_edit_update'}
             }
