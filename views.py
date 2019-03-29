@@ -162,19 +162,9 @@ def browse_entries(request):
     """
     Custom view for browsing all current entries in the encyclopedia
     """
-    # get all articles from journal that are published and the most recent copies
-    # final_articles =  Article.objects.filter(journal=request.journal, stage="Published", updates__isnull=True).order_by("title")
+    # get all articles from journal that are published and have no updates
 
-    final_articles = []
-
-    for article in Article.objects.filter(journal=request.journal, stage="Published").order_by("title"):
-        is_latest = True
-        if hasattr(article, "updates"):
-            for update in article.updates.all():
-                if update.article.stage == "Published":
-                    is_latest = False
-        if is_latest:
-            final_articles.append(article)
+    final_articles = Article.objects.filter(journal=request.journal, stage="Published", updates__isnull=True).order_by("title")
 
     # set up context and render response
     context = {"articles": final_articles}
