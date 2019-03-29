@@ -18,9 +18,9 @@ UPDATE_INFO = {
 
 
 class Version(models.Model):
-    article = models.OneToOneField(Article, null=True, on_delete=models.SET_NULL)
-    parent_article = models.ForeignKey(Article, null=True, on_delete=models.SET_NULL, related_name='updates')
-    base_article = models.ForeignKey(Article, blank=True, null=True, on_delete=models.SET_NULL, related_name='children')
+    article = models.OneToOneField(Article, null=True, on_delete=models.CASCADE)
+    parent_article = models.ForeignKey(Article, null=True, on_delete=models.PROTECT, related_name='updates')
+    base_article = models.ForeignKey(Article, blank=True, null=True, on_delete=models.PROTECT, related_name='children')
     update_type = models.CharField(max_length=20, choices=UPDATE_CHOICES)
 
     @property
