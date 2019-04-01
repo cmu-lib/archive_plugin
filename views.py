@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef
 from django.core.management import call_command
 
 from plugins.archive_plugin import forms, plugin_settings, logic, transactional_emails
-from plugins.archive_plugin.models import Version
+from plugins.archive_plugin.models import Version, Archive
 
 from utils import setting_handler, models
 from utils.notify_helpers import send_email_with_body_from_user
@@ -79,14 +79,17 @@ def article_archive(request, article_id):
     else:
         base_article = article
 
-    # get queryset of all articles with same base_article (including original base article)
-    versions = Article.objects.filter(Q(version__base_article=base_article) | Q(pk=base_article.pk)).filter(stage=STAGE_PUBLISHED).order_by('-date_published').all()
+    is_base_article_archived = Archive.objects.filter(issue__articles=base_article).exists()
 
-    archived_versions = versions.filter(issues__archive__isnull=False).all()
+    # compute if articles are archived
+    archives_subquery = Archive.objects.filter(issue__articles = OuterRef('pk'))
+
+    # get queryset of all articles with same base_article (including original base article)
+    versions = Article.objects.filter(Q(version__base_article=base_article) | Q(pk=base_article.pk)).filter(stage=STAGE_PUBLISHED).order_by('-date_published').annotate(is_archived=Exists(archives_subquery))
 
     # prepare and return page
 
-    context = {'base_article': base_article, 'orig_article': article, 'versions': versions, 'archived_versions': archived_versions, 'journal': request.journal}
+    context = {'base_article': base_article, 'base_article_archived': is_base_article_archived, 'orig_article': article, 'versions': versions, 'journal': request.journal}
 
     template = "archive_plugin/article_version_list.html"
     return render(request, template, context)
