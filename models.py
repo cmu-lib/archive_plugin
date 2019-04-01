@@ -56,4 +56,4 @@ class Archive(models.Model):
     issue = models.OneToOneField(Issue, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.issue
+        return self.issue.issue_title
