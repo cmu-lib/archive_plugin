@@ -81,13 +81,12 @@ def article_archive(request, article_id):
 
     is_base_article_archived = Archive.objects.filter(issue__articles=base_article).exists()
 
-    # compute if articles are archived
+    # Create a subquery to check if articles have any archvied editions at all
     archives_subquery = Archive.objects.filter(issue__articles = OuterRef('pk'))
 
-    # get queryset of all articles with same base_article (including original base article)
+    # get queryset of all articles with same base_article (including original
+    # base article) and compute a boolean field is_archived
     versions = Article.objects.filter(Q(version__base_article=base_article) | Q(pk=base_article.pk)).filter(stage=STAGE_PUBLISHED).order_by('-date_published').annotate(is_archived=Exists(archives_subquery))
-
-    # prepare and return page
 
     context = {'base_article': base_article, 'base_article_archived': is_base_article_archived, 'orig_article': article, 'versions': versions, 'journal': request.journal}
 
