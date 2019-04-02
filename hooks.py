@@ -105,9 +105,6 @@ def reconfigure_archive_search(context):
     captures incoming article_list from search and adds filter to query string to show only latest versions of articles.
     """
     articles_qs = context.get('articles')
-    # print("this is all articles coming in")
-    # print(articles_qs)
     excluded_articles_qs = views.archive_filter_search(articles_qs)
-    # print("this is exlcuded articles")
-    # print(excluded_articles_qs)
-    # return context['articles'] = excluded_articles_qs
+    context['articles'] = excluded_articles_qs
+    return ""
