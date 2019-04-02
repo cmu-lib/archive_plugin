@@ -31,11 +31,14 @@ def index(request):
                                                         pretty='Enable Article Editing and Updating', types='boolean').processed_value
     request_template = setting_handler.get_plugin_setting(plugin, 'request_email_template', request.journal, create=True,
                                                         pretty='Request Email Template', types='rich-text').processed_value
+    archive_search_filter_enabled = setting_handler.get_plugin_setting(plugin, 'archive_search_filter_enabled', request.journal, create=True,
+                                                        pretty='Enable Archive Search Filtering', types='boolean').processed_value
 
     admin_form = forms.ArchiveAdminForm(initial={'journal_archive_enabled': journal_archive_enabled,
                                                 'article_archive_enabled': article_archive_enabled,
                                                 'edit_article_enabled': edit_article_enabled,
-                                                'request_email_template': request_template})
+                                                'request_email_template': request_template,
+                                                'archive_search_filter_enabled':archive_search_filter_enabled})
 
     if request.POST:
         admin_form = forms.ArchiveAdminForm(request.POST)

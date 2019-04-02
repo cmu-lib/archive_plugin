@@ -14,3 +14,6 @@ class ArchiveAdminForm(forms.Form):
                                             label='Email template',
                                             help_text='Template for email sent to author when an editor requests an update.',
                                             widget=forms.Textarea)
+    archive_search_filter_enabled = forms.BooleanField(required=False,
+                                            label='Search Filtering',
+                                            help_text='Toggle search filtering to suppress old versions of articles')

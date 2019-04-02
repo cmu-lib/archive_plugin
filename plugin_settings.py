@@ -39,6 +39,10 @@ def install():
                                                description='Template for the email sent to authors '
                                                            'when an editor requests an article be updated',
                                                is_translatable=False)
+    models.PluginSetting.objects.get_or_create(name='archive_search_filter_enabled', plugin=new_plugin, types='boolean',
+                                               pretty_name='Only show new versions of article on search',
+                                               description='Suppress old article versions',
+                                               is_translatable=False)
 
     message_text = """
         <p>Dear {{ article.correspondence_author.full_name }},</p>
