@@ -58,7 +58,8 @@ def journal_archive(request):
     Display list of journal issues that are "archives"
     """
     journal_versions = Issue.objects.filter(journal=request.journal, archive__isnull=False).order_by('-date')
-    context = {'journal_versions': journal_versions}
+    non_archive_issues = Issue.objects.filter(journal=request.journal, archive__isnull=True).order_by('-date')
+    context = {'journal_versions': journal_versions, 'non_archive_issues': non_archive_issues}
     template = "archive_plugin/journal_version_list.html"
 
     return render(request, template, context)
@@ -94,10 +95,10 @@ def article_archive(request, article_id):
         ).order_by('-date_published').annotate(is_archived=Exists(archives_subquery))
 
     context = {
-                'base_article': base_article, 
-                'base_article_archived': is_base_article_archived, 
-                'orig_article': article, 
-                'versions': versions, 
+                'base_article': base_article,
+                'base_article_archived': is_base_article_archived,
+                'orig_article': article,
+                'versions': versions,
                 'journal': request.journal
                 }
 
