@@ -3,6 +3,8 @@ from django.template.loader import render_to_string
 from plugins.archive_plugin import plugin_settings
 from utils import models, setting_handler
 
+from plugins.archive_plugin import views
+
 def inject_edit_article(context):
     """
     Inject a button into dashboard article management page that allows authors to submit an article update
@@ -97,3 +99,17 @@ def inject_request_edit_update(context):
         context={'article': context.get('article')},
         request=request
     )
+
+def reconfigure_archive_search(context):
+    """
+    captures incoming article_list from search and adds filter to query string to show only latest versions of articles.
+    """
+    request = context.get('request')
+    plugin = models.Plugin.objects.get(name=plugin_settings.SHORT_NAME)
+
+    archive_search_filter_enabled = setting_handler.get_plugin_setting(plugin, 'archive_search_filter_enabled', request.journal)
+    if archive_search_filter_enabled.value:
+        articles_qs = context.get('articles')
+        excluded_articles_qs = views.archive_filter_search(articles_qs)
+        context['articles'] = excluded_articles_qs
+    return ""

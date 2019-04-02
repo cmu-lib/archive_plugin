@@ -34,6 +34,10 @@ def install():
                                                description='Template for the email sent to authors '
                                                            'when an editor requests an article be updated',
                                                is_translatable=False)
+    models.PluginSetting.objects.get_or_create(name='archive_search_filter_enabled', plugin=new_plugin, types='boolean',
+                                               pretty_name='Only show new versions of article on search',
+                                               description='Suppress old article versions',
+                                               is_translatable=False)
 
     message_text = """
         <p>Dear {{ article.correspondence_author.full_name }},</p>
@@ -56,5 +60,6 @@ def hook_registry():
             'article_archive_list': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_article_archive'},
             'article_archive_warning': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_article_archive_warning'},
             'edit_article': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_edit_article'},
-            'request_edit': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_request_edit_update'}
+            'request_edit': {'module': 'plugins.archive_plugin.hooks', 'function': 'inject_request_edit_update'},
+            'filter_search': {'module': 'plugins.archive_plugin.hooks', 'function': 'reconfigure_archive_search'}
             }
