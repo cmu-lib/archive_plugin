@@ -185,3 +185,11 @@ def browse_entries(request):
     template = "archive_plugin/browse.html"
 
     return render(request, template, context)
+
+
+def archive_filter_search(articles_qs):
+    """
+    gets the qs and filters and sends back to the hook for rendering.
+    """
+    return articles_qs.exclude(updates__article__stage=STAGE_PUBLISHED)
+

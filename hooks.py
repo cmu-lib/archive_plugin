@@ -110,6 +110,6 @@ def reconfigure_archive_search(context):
     archive_search_filter_enabled = setting_handler.get_plugin_setting(plugin, 'archive_search_filter_enabled', request.journal)
     if archive_search_filter_enabled.value:
         articles_qs = context.get('articles')
-        excluded_articles_qs = articles_qs.exclude(updates__article__stage="Published")
+        excluded_articles_qs = views.archive_filter_search(articles_qs)
         context['articles'] = excluded_articles_qs
     return ""
