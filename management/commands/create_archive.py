@@ -7,7 +7,7 @@ from journal.models import Issue, Journal
 from utils import setting_handler, models
 
 from plugins.archive_plugin import plugin_settings
-from plugins.archive_plugin.models import Version
+from plugins.archive_plugin.models import Version, Archive
 
 class Command(BaseCommand):
     help = "Run archive issue archive."
@@ -21,7 +21,7 @@ class Command(BaseCommand):
         Will only include the most recent version of articles with multiple versions
         """
         plugin = models.Plugin.objects.get(name=plugin_settings.SHORT_NAME)
-        
+
         # get date and convert to string in format 'Month Year', e.g. 'September 2018'
         curr_date = timezone.now()
         pretty_date = curr_date.strftime('%B') + ' ' + str(curr_date.year)
@@ -42,6 +42,10 @@ class Command(BaseCommand):
 
                 # save initial copy of issue with no articles, register as current issue
                 new_issue = Issue.objects.create(journal=journal, volume=volume, issue=issue, issue_title=title, date=date, issue_type=issue_type, issue_description=issue_description)
+
+                # Create an Archive instance for the issue
+                Archive.objects.create(issue=new_issue)
+
                 journal.current_issue = new_issue
                 journal.save()
 
@@ -60,8 +64,3 @@ class Command(BaseCommand):
                     if is_latest:
                         new_issue.articles.add(article)
 
-                        # register the version as archived
-                        if hasattr(article, "version"):
-                            v = article.version
-                            v.is_archived = True
-                            v.save()

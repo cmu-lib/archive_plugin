@@ -1,20 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
-from django.utils import timezone
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef
 from django.core.management import call_command
 
 from plugins.archive_plugin import forms, plugin_settings, logic, transactional_emails
-from plugins.archive_plugin.models import Version
+from plugins.archive_plugin.models import Version, Archive
 
 from utils import setting_handler, models
 from utils.notify_helpers import send_email_with_body_from_user
 from security.decorators import editor_user_required, author_user_required
 
-from submission.models import Article
+from submission.models import Article, STAGE_PUBLISHED
 from journal.models import Issue
-from submission import models as submission_models
 
 @editor_user_required
 def index(request):
@@ -60,10 +58,9 @@ def index(request):
 
 def journal_archive(request):
     """
-    Display list of overall journal archives
+    Display list of journal issues that are "archives"
     """
-    # can I just do this with the 'journal_issues' url?
-    journal_versions = Issue.objects.filter(journal=request.journal).order_by('-date')
+    journal_versions = Issue.objects.filter(journal=request.journal, archive__isnull=False).order_by('-date')
     context = {'journal_versions': journal_versions}
     template = "archive_plugin/journal_version_list.html"
 
@@ -79,22 +76,33 @@ def article_archive(request, article_id):
     article = get_object_or_404(Article, pk=article_id)
 
     # ensure current article is either an update or the parent of another article
-    if hasattr(article, 'version') or hasattr(article, 'updates'):
-        if hasattr(article, 'version'):
-            base_article = article.version.base_article
-        else:
-            base_article = article
 
-        # get queryset of all articles with same base_article (including original base article)
-        versions = Article.objects.filter(Q(version__base_article=base_article) | Q(pk=base_article.pk)).filter(stage='Published').order_by('-date_published')
-
-        # prepare and return page
-
-        context = {'base_article': base_article, 'orig_article': article, 'versions': versions, 'journal': request.journal}
-
-    # if no updates, just return the single entry
+    if hasattr(article, 'version'):
+        base_article = article.version.base_article
     else:
-        context = {'base_article': article, 'orig_article': article, 'versions': [article], 'journal': request.journal}
+        base_article = article
+
+    is_base_article_archived = Archive.objects.filter(issue__articles=base_article).exists()
+
+    # Create a subquery to check if articles have any archvied editions at all
+    archives_subquery = Archive.objects.filter(issue__articles = OuterRef('pk'))
+
+    # get queryset of all articles with same base_article (including original
+    # base article) and compute a boolean field is_archived
+    versions = Article.objects.filter(
+            (
+                Q(version__base_article=base_article) | Q(pk=base_article.pk)
+            ),
+             stage=STAGE_PUBLISHED
+        ).order_by('-date_published').annotate(is_archived=Exists(archives_subquery))
+
+    context = {
+                'base_article': base_article, 
+                'base_article_archived': is_base_article_archived, 
+                'orig_article': article, 
+                'versions': versions, 
+                'journal': request.journal
+                }
 
     template = "archive_plugin/article_version_list.html"
     return render(request, template, context)
@@ -120,7 +128,6 @@ def update_article(request, article_id):
     Registers a new article as an update of the original article
     : article_id is the pk of the article the user is currently submitting
     : base_article is the pk of the original article this is updating
-    The relationship between multiple articles is traced via publication dates
     """
     if request.POST: # a gift for Andy
         update_type = request.POST.get('update_type')
@@ -169,18 +176,16 @@ def browse_entries(request):
     """
     Custom view for browsing all current entries in the encyclopedia
     """
+    # get all articles from journal that are published and have no updates
 
-    final_articles = []
-    # get all articles from journal that are published and the most recent copies (handled in logic)
-    article_list = Article.objects.filter(journal=request.journal, stage="Published").order_by("title")
-    
-    final_articles = logic.is_latest(article_list)
+    final_articles = Article.objects.filter(journal=request.journal, stage=STAGE_PUBLISHED, updates__isnull=True).order_by("title")
 
     # set up context and render response
     context = {"articles": final_articles}
     template = "archive_plugin/browse.html"
 
     return render(request, template, context)
+
 
 def archive_filter_search(articles_qs):
     """
