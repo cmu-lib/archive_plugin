@@ -26,8 +26,8 @@
                 {% for version in versions %}
                 <tr>
                     <td>
-                        <a href="{{ version.article.local_url }}">{{ version.date_published| date:"F d, Y" }}</a>
-                        {% if version == orig_article %}
+                        <a href="{{ version.local_url }}">{{ version.date_published| date:"F d, Y" }}</a>
+                    {% if version == orig_article %}
                         <strong> (THIS VERSION)</strong>
                     {% endif %}
                     </td>
