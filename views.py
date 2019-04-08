@@ -76,14 +76,14 @@ def article_archive(request, article_id):
     # get current article
     article = get_object_or_404(Article, pk=article_id)
 
-    # ensure current article is either an update or the parent of another article
+    # determine if current article is archived.
+    is_article_archived = Archive.objects.filter(issue__articles=article).exists()
 
+    # ensure current article is either an update or the parent of another article
     if hasattr(article, 'version'):
         base_article = article.version.base_article
     else:
         base_article = article
-
-    is_base_article_archived = Archive.objects.filter(issue__articles=base_article).exists()
 
     # Create a subquery to check if articles have any archvied editions at all
     archives_subquery = Archive.objects.filter(issue__articles = OuterRef('pk'))
@@ -99,7 +99,7 @@ def article_archive(request, article_id):
 
     context = {
                 'base_article': base_article,
-                'base_article_archived': is_base_article_archived,
+                'orig_article_archived': is_article_archived,
                 'orig_article': article,
                 'versions': versions,
                 'journal': request.journal
