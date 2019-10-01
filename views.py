@@ -177,9 +177,17 @@ def browse_entries(request):
     """
     Custom view for browsing all current entries in the encyclopedia
     """
-    # get all articles from journal that are published and have no updates
-
-    final_articles = Article.objects.filter(journal=request.journal, stage=STAGE_PUBLISHED, updates__isnull=True).order_by("title")
+    # get all articles from journal that are published and have no updates or have an update that is not yet published
+    final_articles = Article.objects.filter(
+                                            Q(journal=request.journal) & Q(stage=STAGE_PUBLISHED) & 
+                                                (
+                                                    Q(updates__isnull=True) | 
+                                                        (
+                                                            Q(updates__isnull=False) & 
+                                                            ~Q(updates__article__stage=STAGE_PUBLISHED) 
+                                                        ) 
+                                                ) 
+                                            ).order_by("title")
 
     # set up context and render response
     context = {"articles": final_articles}
