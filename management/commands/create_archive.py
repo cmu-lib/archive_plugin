@@ -3,7 +3,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 
 from submission.models import Article
-from journal.models import Issue, Journal
+from journal.models import Issue, IssueType, Journal
 from utils import setting_handler, models
 
 from plugins.archive_plugin import plugin_settings
@@ -38,7 +38,7 @@ class Command(BaseCommand):
                 (volume, issue) = Issue.auto_increment_volume_issue(journal)
                 date = curr_date
                 issue_description = "Quarterly archive run " + pretty_date
-                issue_type = "Issue"
+                issue_type = IssueType.objects.get(journal=journal, code='issue')
 
                 # save initial copy of issue with no articles, register as current issue
                 new_issue = Issue.objects.create(journal=journal, volume=volume, issue=issue, issue_title=title, date=date, issue_type=issue_type, issue_description=issue_description)
