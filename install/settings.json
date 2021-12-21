@@ -1,0 +1,92 @@
+[
+  {
+    "group": {
+      "name": "plugin:archive_plugin"
+    },
+    "setting": {
+      "description": "Enable Archive Plugin.",
+      "is_translatable": false,
+      "name": "archive_enabled",
+      "pretty_name": "Enable Archive Plugin",
+      "type": "boolean"
+    },
+    "value": {
+      "default": ""
+    }
+  },
+  {
+    "group": {
+      "name": "plugin:archive_plugin"
+    },
+    "setting": {
+      "description": "Enable Journal Archive Display",
+      "is_translatable": false,
+      "name": "journal_archive_enabled",
+      "pretty_name": "Enable Journal Archive Display",
+      "type": "boolean"
+    },
+    "value": {
+      "default": ""
+    }
+  },
+  {
+    "group": {
+      "name": "plugin:archive_plugin"
+    },
+    "setting": {
+      "description": "Enable Article Archive Display",
+      "is_translatable": false,
+      "name": "article_archive_enabled",
+      "pretty_name": "Enable Article Archive Display",
+      "type": "boolean"
+    },
+    "value": {
+      "default": ""
+    }
+  },
+  {
+    "group": {
+      "name": "plugin:archive_plugin"
+    },
+    "setting": {
+      "description": "Enable Article Editing and Updating",
+      "is_translatable": false,
+      "name": "edit_article_enabled",
+      "pretty_name": "Enable Article Editing and Updating",
+      "type": "boolean"
+    },
+    "value": {
+      "default": ""
+    }
+  },
+  {
+    "group": {
+      "name": "plugin:archive_plugin"
+    },
+    "setting": {
+      "description": "Template for the email sent to authors when an editor requests an article be updated",
+      "is_translatable": false,
+      "name": "request_email_template",
+      "pretty_name": "Request Email Template",
+      "type": "boolean"
+    },
+    "value": {
+      "default": ""
+    }
+  },
+  {
+    "group": {
+      "name": "plugin:archive_plugin"
+    },
+    "setting": {
+      "description": "Suppress old article versions",
+      "is_translatable": false,
+      "name": "archive_search_filter_enabled",
+      "pretty_name": "Only show new versions of article on search",
+      "type": "boolean"
+    },
+    "value": {
+      "default": ""
+    }
+  }
+]  
