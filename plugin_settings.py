@@ -18,7 +18,7 @@ class ArchivePlugin(plugins.Plugin):
     short_name = SHORT_NAME
     manager_url = MANAGER_URL
     version = VERSION
-    janeway_version = "1.4.0"
+    janeway_version = "1.7.0"
     is_workflow_plugin = False
 
 def install():
