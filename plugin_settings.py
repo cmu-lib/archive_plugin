@@ -1,5 +1,5 @@
 PLUGIN_NAME = 'Archiving Plugin'
-DESCRIPTION = 'A plugin for managing archives of previous version of articles'
+DESCRIPTION = 'A plugin for managing archives of previous versions of articles'
 AUTHOR = 'Drew Stimson and Daniel Evans'
 VERSION = '0.1'
 SHORT_NAME = 'archive_plugin'

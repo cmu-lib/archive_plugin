@@ -49,7 +49,7 @@ class Version(models.Model):
         """
         Has the corresponding author for this version changed from its parent version?
         """
-        return self.article.correspondence_author.pk == self.parent_article.coreespondece_author.pk
+        return self.article.correspondence_author.pk == self.parent_article.correspondence_author.pk
 
 
 class Archive(models.Model):

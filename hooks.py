@@ -50,7 +50,7 @@ def inject_article_archive_warning(context):
 
 def inject_article_archive(context):
     """
-    Injects a link for the user to browse previous version of an article
+    Injects a link for the user to browse previous versions of an article
     """
     request = context.get('request')
     plugin = models.Plugin.objects.get(name=plugin_settings.SHORT_NAME)
